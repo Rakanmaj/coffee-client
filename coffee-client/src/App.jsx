@@ -1,35 +1,85 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import React from "react";
+import { Routes, Route, Navigate } from "react-router-dom";
+import { AppProvider } from "./context/AppContext";
+import RequireAuth from "./components/RequireAuth";
+import Navbar from "./components/Navbar";
 
-function App() {
-  const [count, setCount] = useState(0)
+import Auth from "./pages/Auth/Auth";
+import Menu from "./pages/Menu/Menu";
+import Cart from "./pages/Cart/Cart";
+import Checkout from "./pages/Checkout/Checkout";
+import Reports from "./pages/Reports/Reports";
+import ManageMenu from "./pages/ManageMenu/ManageMenu";
+import Storage from "./pages/Storage/Storage";
 
+export default function App() {
   return (
-    <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
-    </>
-  )
-}
+    <AppProvider>
+      <Navbar />
+      <Routes>
+        <Route path="/auth" element={<Auth />} />
 
-export default App
+        <Route
+          path="/"
+          element={<Navigate to="/menu" replace />}
+        />
+
+        <Route
+          path="/menu"
+          element={
+            <RequireAuth>
+              <Menu />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/cart"
+          element={
+            <RequireAuth>
+              <Cart />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/checkout"
+          element={
+            <RequireAuth>
+              <Checkout />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/reports"
+          element={
+            <RequireAuth>
+              <Reports />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/manage-menu"
+          element={
+            <RequireAuth>
+              <ManageMenu />
+            </RequireAuth>
+          }
+        />
+
+        <Route
+          path="/storage"
+          element={
+            <RequireAuth>
+              <Storage />
+            </RequireAuth>
+          }
+        />
+
+        <Route path="*" element={<Navigate to="/menu" replace />} />
+      </Routes>
+    </AppProvider>
+  );
+}

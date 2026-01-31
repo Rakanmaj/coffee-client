@@ -1,0 +1,31 @@
+.authWrap{
+  min-height: calc(100vh - 72px);
+  display: grid;
+  place-items: center;
+  padding: 24px 0 40px;
+}
+
+.authCard{
+  width: min(520px, calc(100% - 28px));
+  border-radius: 22px;
+  border: 1px solid rgba(255,255,255,0.12);
+  background: linear-gradient(180deg, rgba(255,255,255,0.08), rgba(255,255,255,0.05));
+  box-shadow: 0 22px 55px rgba(0,0,0,0.30);
+  padding: 18px;
+}
+
+.authInner{
+  padding: 16px;
+}
+
+.authTitle{
+  font-size: 26px;
+  font-weight: 900;
+  margin: 4px 0 10px;
+}
+
+.authHint{
+  margin-top: 10px;
+  color: rgba(255,255,255,0.65);
+  font-size: 13px;
+}

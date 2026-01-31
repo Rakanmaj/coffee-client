@@ -1,0 +1,101 @@
+.page {
+  padding: 18px;
+}
+
+.cart-list {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.cart-item {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.ci-main {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+}
+
+.ci-title {
+  font-weight: 600;
+}
+
+.ci-sub {
+  color: #666;
+  font-size: 14px;
+}
+
+.ci-controls {
+  display: flex;
+  gap: 10px;
+  margin-top: 10px;
+  align-items: center;
+}
+
+.qty {
+  width: 90px;
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.btn {
+  border: 1px solid #ddd;
+  background: #fff;
+  padding: 8px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.ci-note {
+  margin-top: 10px;
+}
+
+.note {
+  width: 100%;
+  padding: 10px 12px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.summary {
+  margin-top: 14px;
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+  max-width: 420px;
+}
+
+.sum-row {
+  display: flex;
+  justify-content: space-between;
+  margin-bottom: 10px;
+}
+
+.primary {
+  width: 100%;
+  border: 1px solid #111;
+  background: #111;
+  color: #fff;
+  padding: 10px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.muted {
+  color: #666;
+}
+
+.link {
+  border: none;
+  background: transparent;
+  color: #111;
+  cursor: pointer;
+  text-decoration: underline;
+}

@@ -1,0 +1,95 @@
+.page {
+  padding: 18px;
+}
+
+.controls {
+  display: flex;
+  gap: 10px;
+  align-items: end;
+  flex-wrap: wrap;
+  margin: 12px 0;
+}
+
+.controls label {
+  display: block;
+  font-size: 13px;
+  color: #444;
+}
+
+.controls input {
+  padding: 8px 10px;
+  border-radius: 10px;
+  border: 1px solid #ddd;
+}
+
+.btn {
+  border: 1px solid #ddd;
+  background: #111;
+  color: #fff;
+  padding: 9px 12px;
+  border-radius: 10px;
+  cursor: pointer;
+}
+
+.cards {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 10px;
+  margin: 12px 0;
+}
+
+.card {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  padding: 12px;
+  background: #fff;
+}
+
+.k {
+  color: #666;
+  font-size: 13px;
+}
+
+.v {
+  font-size: 18px;
+  font-weight: 700;
+  margin-top: 6px;
+}
+
+.table-wrap {
+  border: 1px solid #eee;
+  border-radius: 12px;
+  background: #fff;
+  overflow: hidden;
+}
+
+table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+th, td {
+  padding: 10px 12px;
+  border-bottom: 1px solid #f0f0f0;
+  text-align: left;
+  font-size: 14px;
+}
+
+th {
+  background: #fafafa;
+  font-weight: 600;
+}
+
+.error {
+  background: #ffe7e7;
+  border: 1px solid #ffb8b8;
+  color: #7a0000;
+  padding: 10px 12px;
+  border-radius: 10px;
+  margin: 10px 0;
+}
+
+.muted {
+  padding: 12px;
+  color: #666;
+}
