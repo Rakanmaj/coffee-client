@@ -3,7 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
 import RequireAuth from "./components/RequireAuth";
 import Navbar from "./components/Navbar";
-
+import Analytics from "./pages/Analytics/Analytics";
 import Auth from "./pages/Auth/Auth";
 import Menu from "./pages/Menu/Menu";
 import Cart from "./pages/Cart/Cart";
@@ -77,6 +77,15 @@ export default function App() {
             </RequireAuth>
           }
         />
+
+        <Route
+  path="/analytics"
+  element={
+    <RequireAuth>
+      <Analytics />
+    </RequireAuth>
+  }
+/>
 
         <Route path="*" element={<Navigate to="/menu" replace />} />
       </Routes>

@@ -84,6 +84,13 @@ export default function Navbar() {
               Storage
             </NavLink>
 
+            <NavLink
+  to="/analytics"
+  className={({ isActive }) => (isActive ? "navLink navLinkActive" : "navLink")}
+>
+  Analytics
+</NavLink>
+
             <button className="btn btnGhost" onClick={handle_logout}>
               Logout
             </button>
