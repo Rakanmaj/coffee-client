@@ -1,11 +1,11 @@
 import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
 import { AnimatePresence, motion as Motion, useReducedMotion } from "framer-motion";
+import { useLocation, useNavigate } from "react-router-dom";
 import api from "../../api/api";
 import { playCustomerTone, playReadyTone, unlockAudio } from "../../utils/sounds";
 import { getCustomerMenuCategory } from "../../utils/displayCategory";
 import CategoryTransitionOverlay from "../../components/CategoryTransitionOverlay";
 import MomentSplash from "../../components/MomentSplash";
-import momentHeroDoodle from "../../assets/moment-benefit-doodle.png";
 import "./DriveThru.css";
 
 const loadMomentCupScene = () => import("../../components/MomentCupScene");
@@ -44,10 +44,21 @@ const reduced_card_variants = {
   visible: { opacity: 1, transition: { duration: 0.08 } },
 };
 
+function read_session_cart() {
+  try {
+    const saved_cart = JSON.parse(sessionStorage.getItem("momentDriveCart") || "[]");
+    return Array.isArray(saved_cart) ? saved_cart : [];
+  } catch {
+    return [];
+  }
+}
+
 export default function DriveThru() {
+  const location = useLocation();
+  const navigate = useNavigate();
   const [products, setProducts] = useState([]);
   const [tab, setTab] = useState("hot");
-  const [cart, setCart] = useState([]);
+  const [cart, setCart] = useState(read_session_cart);
   const [carType, setCarType] = useState("");
   const [paymentMethod, setPaymentMethod] = useState("Cash");
   const [order, setOrder] = useState(null);
@@ -60,6 +71,11 @@ export default function DriveThru() {
   const [transitionCategory, setTransitionCategory] = useState(null);
   const categoryTimers = useRef([]);
   const reducedMotion = useReducedMotion();
+  const normalized_path = location.pathname.replace(/\/+$/, "");
+  const drive_base_path = normalized_path.startsWith("/drive-through")
+    ? "/drive-through"
+    : "/drive-thru";
+  const is_checkout_page = normalized_path === `${drive_base_path}/checkout`;
 
   useEffect(() => {
     let mounted = true;
@@ -89,6 +105,10 @@ export default function DriveThru() {
   useEffect(() => () => {
     categoryTimers.current.forEach((timer) => window.clearTimeout(timer));
   }, []);
+
+  useEffect(() => {
+    sessionStorage.setItem("momentDriveCart", JSON.stringify(cart));
+  }, [cart]);
 
   useEffect(() => {
     const preload = window.setTimeout(() => {
@@ -196,6 +216,11 @@ export default function DriveThru() {
     return Math.round(sum * 1000) / 1000;
   }, [cart]);
 
+  const cart_item_count = useMemo(
+    () => cart.reduce((sum, item) => sum + Number(item.quantity), 0),
+    [cart]
+  );
+
   function add_item(product, quantity = 1, source_element = null) {
     unlockAudio();
     const amount = Math.max(1, Number(quantity) || 1);
@@ -232,11 +257,13 @@ export default function DriveThru() {
 
     const source_rect = source_element.getBoundingClientRect();
     const cart = document.querySelector(".driveCart");
-    const cart_target = cart?.querySelector(".driveCartCount") || cart;
-    if (!cart_target) return;
-
-    const target_rect = cart_target.getBoundingClientRect();
-    const target_is_visible = target_rect.top < window.innerHeight && target_rect.bottom > 0;
+    const cart_target = document.querySelector(".momentStickyCheckout")
+      || cart?.querySelector(".driveCartCount")
+      || cart;
+    const target_rect = cart_target?.getBoundingClientRect();
+    const target_is_visible = Boolean(
+      target_rect && target_rect.top < window.innerHeight && target_rect.bottom > 0
+    );
     const start_x = source_rect.left + source_rect.width / 2;
     const start_y = source_rect.top + source_rect.height / 2;
     const target_x = target_is_visible
@@ -300,10 +327,11 @@ export default function DriveThru() {
       .finally(() => {
         drop.remove();
         product_card?.classList.remove("momentProductPop");
-        cart.classList.remove("momentCartLanding");
-        void cart.offsetWidth;
-        cart.classList.add("momentCartLanding");
-        window.setTimeout(() => cart.classList.remove("momentCartLanding"), 460);
+        const landing_target = document.querySelector(".momentStickyCheckout") || cart;
+        landing_target?.classList.remove("momentCartLanding");
+        if (landing_target) void landing_target.offsetWidth;
+        landing_target?.classList.add("momentCartLanding");
+        window.setTimeout(() => landing_target?.classList.remove("momentCartLanding"), 460);
       });
   }
 
@@ -383,15 +411,99 @@ export default function DriveThru() {
     setError("");
   }
 
-  function scroll_to_section(section_id) {
-    const section = document.getElementById(section_id);
-    if (!section) return;
+  function open_checkout() {
+    if (cart.length === 0) return;
+    navigate(`${drive_base_path}/checkout`);
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  }
 
-    const reduce_motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
-    section.scrollIntoView({
-      behavior: reduce_motion ? "auto" : "smooth",
-      block: "start",
-    });
+  function return_to_menu() {
+    navigate(drive_base_path);
+    window.requestAnimationFrame(() => window.scrollTo({ top: 0, behavior: "auto" }));
+  }
+
+  function render_checkout_form() {
+    return (
+      <form className="driveCart driveCheckoutPageForm has-items" onSubmit={submit_order}>
+        <div className="driveCartHead">
+          <div>
+            <h2>Place your order</h2>
+            <p>{cart_item_count} item{cart_item_count === 1 ? "" : "s"} selected</p>
+          </div>
+          <strong className="driveCartCount">{cart_item_count}</strong>
+        </div>
+
+        <div className="driveCartItems">
+          {cart.map((item) => (
+            <div className="driveCartItem" key={item.product_id}>
+              <div className="driveCartLine">
+                <div>
+                  <strong>{item.name}</strong>
+                  <span>{format_omr(item.price_omr)} OMR</span>
+                </div>
+                <div className="driveStepper">
+                  <button onClick={() => change_qty(item.product_id, -1)} type="button">
+                    -
+                  </button>
+                  <b>{item.quantity}</b>
+                  <button onClick={() => change_qty(item.product_id, 1)} type="button">
+                    +
+                  </button>
+                </div>
+              </div>
+              <textarea
+                placeholder="Optional note for this item"
+                value={item.note}
+                onChange={(e) => set_note(item.product_id, e.target.value)}
+              />
+            </div>
+          ))}
+        </div>
+
+        <div className="driveCheckoutBlock">
+          <label className="driveField">
+            <span>Car type</span>
+            <input
+              placeholder="White Toyota Camry, plate 1234"
+              value={carType}
+              onChange={(e) => setCarType(e.target.value)}
+              required
+            />
+          </label>
+
+          <div className="drivePay">
+            <span>Payment</span>
+            <div>
+              <button
+                className={paymentMethod === "Cash" ? "selected" : ""}
+                onClick={() => setPaymentMethod("Cash")}
+                type="button"
+              >
+                Cash
+              </button>
+              <button
+                className={paymentMethod === "Visa" ? "selected" : ""}
+                onClick={() => setPaymentMethod("Visa")}
+                type="button"
+              >
+                Visa
+              </button>
+            </div>
+          </div>
+        </div>
+
+        <div className="driveCartFooter">
+          <div className="driveTotal">
+            <span>Total</span>
+            <strong>{format_omr(total)} OMR</strong>
+          </div>
+
+          <button className="drivePrimary" disabled={submitting} type="submit">
+            {submitting ? "Sending..." : "Place order"}
+          </button>
+        </div>
+      </form>
+    );
   }
 
   if (order) {
@@ -467,114 +579,58 @@ export default function DriveThru() {
     );
   }
 
+  if (is_checkout_page) {
+    return (
+      <>
+        <AnimatePresence>{showSplash ? <MomentSplash key="moment-splash" /> : null}</AnimatePresence>
+        <main className="drivePage driveCheckoutPage">
+          <header className="momentCheckoutHeader">
+            <button className="momentCheckoutBack" onClick={return_to_menu} type="button">
+              <svg viewBox="0 0 24 24" aria-hidden="true">
+                <path d="M19 12H6" />
+                <path d="m10 7-5 5 5 5" />
+              </svg>
+              Back to menu
+            </button>
+            <div className="momentMenuEyebrow">
+              <span aria-hidden="true" />
+              Moment Drive-Through
+            </div>
+            <h1>Review your order.</h1>
+            <p>Adjust your items, add notes, and tell us which car to look for.</p>
+          </header>
+
+          {cart.length > 0 ? (
+            render_checkout_form()
+          ) : (
+            <div className="momentEmptyCheckout">
+              <h2>Your order is empty.</h2>
+              <p>Return to the menu and choose something for your moment.</p>
+              <button className="drivePrimary" onClick={return_to_menu} type="button">
+                Browse menu
+              </button>
+            </div>
+          )}
+        </main>
+      </>
+    );
+  }
+
   return (
     <>
       <AnimatePresence>{showSplash ? <MomentSplash key="moment-splash" /> : null}</AnimatePresence>
-      <main className="drivePage">
-        <section className="momentHero" aria-labelledby="moment-hero-title">
-          <div className="momentHeroInner">
-            <div className="momentHeroCopy">
-              <div className="momentHeroEyebrow">
-                <span aria-hidden="true" />
-                Moment Drive-Through
-              </div>
+      <main className={`drivePage ${cart.length > 0 ? "hasCheckoutBar" : ""}`}>
+      <header className="momentMenuHeader" id="moment-menu">
+        <div className="momentMenuEyebrow">
+          <span aria-hidden="true" />
+          Moment Drive-Through
+        </div>
+        <h1>Order from your car.</h1>
+        <p>Choose your favorites and we will prepare everything fresh for easy pickup.</p>
+      </header>
 
-              <h1 id="moment-hero-title">
-                Your moment,
-                <span> brewed fresh.</span>
-              </h1>
-
-              <p className="momentHeroLead">
-                From your car to your hands, enjoy a smooth ordering experience with drinks
-                prepared fresh, just for you.
-              </p>
-
-              <div className="momentHeroScript">
-                <span aria-hidden="true" />
-                Brewed with love
-              </div>
-
-              <div className="momentHeroActions">
-                <button
-                  className="momentHeroPrimary"
-                  onClick={() => scroll_to_section("moment-menu")}
-                  type="button"
-                >
-                  Start your order
-                  <span className="momentCtaIcon" aria-hidden="true">
-                    <svg viewBox="0 0 24 24">
-                      <path d="M5 12h13" />
-                      <path d="m14 7 5 5-5 5" />
-                    </svg>
-                  </span>
-                </button>
-                <button
-                  className="momentHeroSecondary"
-                  onClick={() => scroll_to_section("moment-categories")}
-                  type="button"
-                >
-                  Browse menu
-                </button>
-              </div>
-
-              <div className="momentHeroHelper">Freshly brewed, ready in moments</div>
-
-              <ul className="momentHeroFeatures" aria-label="Drive-through benefits">
-                <li>
-                  <span className="momentFeatureNumber" aria-hidden="true">01</span>
-                  <div>
-                    <small>Made fresh</small>
-                    <b>Freshly prepared</b>
-                  </div>
-                </li>
-                <li>
-                  <span className="momentFeatureNumber" aria-hidden="true">02</span>
-                  <div>
-                    <small>Stay comfortable</small>
-                    <b>Order from your car</b>
-                  </div>
-                </li>
-                <li>
-                  <span className="momentFeatureNumber" aria-hidden="true">03</span>
-                  <div>
-                    <small>Quick pickup</small>
-                    <b>Ready in moments</b>
-                  </div>
-                </li>
-              </ul>
-            </div>
-
-            <div className="momentHeroVisual">
-              <div className="momentHeroOrganic" aria-hidden="true" />
-              <div className="momentHeroBeans" aria-hidden="true">
-                <img src={momentHeroDoodle} alt="" />
-                <img src={momentHeroDoodle} alt="" />
-                <img src={momentHeroDoodle} alt="" />
-              </div>
-              <div className="momentHeroHeart" aria-hidden="true">&#9825;</div>
-              <div className="momentHeroSticker" aria-hidden="true">
-                <span>Made for</span>
-                your moment
-              </div>
-              {showSplash ? (
-                <div className="momentCupCanvas momentCupCanvas-hero" aria-hidden="true" />
-              ) : (
-                <Suspense fallback={<div className="momentSceneFallback" aria-hidden="true" />}>
-                  <MomentCupScene status="showcase" mode="hero" />
-                </Suspense>
-              )}
-            </div>
-          </div>
-        </section>
-
-      <section className="driveShell" id="moment-menu">
+      <section className="driveShell">
         <div className="driveMenu">
-          <div className="momentMenuHeading">
-            <span>Brewed with love</span>
-            <h2>Choose your moment.</h2>
-            <p>Quick to browse, freshly prepared, and delivered to your car.</p>
-          </div>
-
           <div className="driveTabs" id="moment-categories">
             {categories.map((category) => (
               <button
@@ -625,9 +681,9 @@ export default function DriveThru() {
                     >
                       <ProductDecoration product={product} />
                       <div className="momentProductCopy">
-                        <span className="momentAvailability">
-                          <i /> {product.is_active === false ? "Unavailable" : "Available today"}
-                        </span>
+                        {product.is_active === false ? (
+                          <span className="momentUnavailable">Unavailable</span>
+                        ) : null}
                         <h2>{product.name}</h2>
                         <p>{product_detail(product)}</p>
                       </div>
@@ -635,15 +691,8 @@ export default function DriveThru() {
                         <strong>{format_omr(product.price_omr)} OMR</strong>
                         <div className="momentProductActions">
                           <button
-                            className="momentProductDetails"
-                            onClick={() => open_product(product)}
-                            type="button"
-                          >
-                            Details
-                          </button>
-                          <button
                             disabled={product.is_active === false}
-                            onClick={(event) => add_item(product, 1, event.currentTarget)}
+                            onClick={() => open_product(product)}
                             type="button"
                           >
                             Add
@@ -658,90 +707,31 @@ export default function DriveThru() {
           </div>
         </div>
 
-        <form className={`driveCart ${cart.length > 0 ? "has-items" : "is-empty"}`} onSubmit={submit_order}>
-          <div className="driveCartHead">
-            <div>
-              <h2>Your order</h2>
-              <p>{cart.length} selected item{cart.length === 1 ? "" : "s"}</p>
-            </div>
-            <strong className="driveCartCount">{cart.length}</strong>
-          </div>
-
-          <div className="driveCartItems">
-            {cart.length === 0 ? (
-              <div className="driveEmpty">Your cart is empty.</div>
-            ) : (
-              cart.map((item) => (
-                <div className="driveCartItem" key={item.product_id}>
-                  <div className="driveCartLine">
-                    <div>
-                      <strong>{item.name}</strong>
-                      <span>{format_omr(item.price_omr)} OMR</span>
-                    </div>
-                    <div className="driveStepper">
-                      <button onClick={() => change_qty(item.product_id, -1)} type="button">
-                        -
-                      </button>
-                      <b>{item.quantity}</b>
-                      <button onClick={() => change_qty(item.product_id, 1)} type="button">
-                        +
-                      </button>
-                    </div>
-                  </div>
-                  <textarea
-                    placeholder="Optional note for this item"
-                    value={item.note}
-                    onChange={(e) => set_note(item.product_id, e.target.value)}
-                  />
-                </div>
-              ))
-            )}
-          </div>
-
-          <div className="driveCheckoutBlock">
-            <label className="driveField">
-              <span>Car type</span>
-              <input
-                placeholder="White Toyota Camry, plate 1234"
-                value={carType}
-                onChange={(e) => setCarType(e.target.value)}
-                required
-              />
-            </label>
-
-            <div className="drivePay">
-              <span>Payment</span>
-              <div>
-                <button
-                  className={paymentMethod === "Cash" ? "selected" : ""}
-                  onClick={() => setPaymentMethod("Cash")}
-                  type="button"
-                >
-                  Cash
-                </button>
-                <button
-                  className={paymentMethod === "Visa" ? "selected" : ""}
-                  onClick={() => setPaymentMethod("Visa")}
-                  type="button"
-                >
-                  Visa
-                </button>
-              </div>
-            </div>
-          </div>
-
-          <div className="driveCartFooter">
-            <div className="driveTotal">
-              <span>Total</span>
-              <strong>{format_omr(total)} OMR</strong>
-            </div>
-
-            <button className="drivePrimary" disabled={submitting} type="submit">
-              {submitting ? "Sending..." : "Send Order"}
-            </button>
-          </div>
-        </form>
       </section>
+
+      <AnimatePresence>
+        {cart.length > 0 ? (
+          <Motion.button
+            className="momentStickyCheckout"
+            initial={{ opacity: 0, y: 24, scale: 0.96 }}
+            animate={{ opacity: 1, y: 0, scale: 1 }}
+            exit={{ opacity: 0, y: 24, scale: 0.96 }}
+            transition={{ duration: reducedMotion ? 0.08 : 0.2 }}
+            onClick={open_checkout}
+            type="button"
+          >
+            <span>
+              Checkout
+              <small>{cart_item_count} item{cart_item_count === 1 ? "" : "s"}</small>
+            </span>
+            <strong>{format_omr(total)} OMR</strong>
+            <svg viewBox="0 0 24 24" aria-hidden="true">
+              <path d="M5 12h13" />
+              <path d="m14 7 5 5-5 5" />
+            </svg>
+          </Motion.button>
+        ) : null}
+      </AnimatePresence>
 
       <AnimatePresence>
         {selectedProduct ? (
@@ -770,9 +760,9 @@ export default function DriveThru() {
               >
                 x
               </button>
-              <span className="momentAvailability">
-                <i /> {selectedProduct.is_active === false ? "Unavailable" : "Available today"}
-              </span>
+              {selectedProduct.is_active === false ? (
+                <span className="momentUnavailable">Unavailable</span>
+              ) : null}
               <h2>{selectedProduct.name}</h2>
               <p>{product_detail(selectedProduct)}</p>
 
