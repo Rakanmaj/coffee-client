@@ -1,9 +1,11 @@
-import React, { lazy, Suspense, useEffect, useMemo, useState } from "react";
-import { AnimatePresence, motion as Motion } from "framer-motion";
+import React, { lazy, Suspense, useEffect, useMemo, useRef, useState } from "react";
+import { AnimatePresence, motion as Motion, useReducedMotion } from "framer-motion";
 import api from "../../api/api";
 import { playCustomerTone, playReadyTone, unlockAudio } from "../../utils/sounds";
 import { getCustomerMenuCategory } from "../../utils/displayCategory";
+import CategoryTransitionOverlay from "../../components/CategoryTransitionOverlay";
 import MomentSplash from "../../components/MomentSplash";
+import momentHeroDoodle from "../../assets/moment-benefit-doodle.png";
 import "./DriveThru.css";
 
 const loadMomentCupScene = () => import("../../components/MomentCupScene");
@@ -14,6 +16,33 @@ const categories = [
   { id: "cold", label: "Cold", icon: "ice" },
   { id: "snack", label: "Snacks", icon: "spark" },
 ];
+
+const product_grid_variants = {
+  hidden: { opacity: 0, y: 12, scale: 0.98 },
+  visible: {
+    opacity: 1,
+    y: 0,
+    scale: 1,
+    transition: { duration: 0.22, staggerChildren: 0.06, delayChildren: 0.02 },
+  },
+  exit: { opacity: 0, y: -7, scale: 0.99, transition: { duration: 0.12 } },
+};
+
+const product_card_variants = {
+  hidden: { opacity: 0, y: 12, scale: 0.98 },
+  visible: { opacity: 1, y: 0, scale: 1, transition: { duration: 0.22 } },
+};
+
+const reduced_grid_variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.08 } },
+  exit: { opacity: 0, transition: { duration: 0.06 } },
+};
+
+const reduced_card_variants = {
+  hidden: { opacity: 0 },
+  visible: { opacity: 1, transition: { duration: 0.08 } },
+};
 
 export default function DriveThru() {
   const [products, setProducts] = useState([]);
@@ -28,6 +57,9 @@ export default function DriveThru() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [transitionCategory, setTransitionCategory] = useState(null);
+  const categoryTimers = useRef([]);
+  const reducedMotion = useReducedMotion();
 
   useEffect(() => {
     let mounted = true;
@@ -52,6 +84,10 @@ export default function DriveThru() {
     return () => {
       mounted = false;
     };
+  }, []);
+
+  useEffect(() => () => {
+    categoryTimers.current.forEach((timer) => window.clearTimeout(timer));
   }, []);
 
   useEffect(() => {
@@ -133,6 +169,24 @@ export default function DriveThru() {
   }, [products]);
 
   const active_products = grouped[tab] || [];
+
+  function change_category(next_category) {
+    if (next_category === (transitionCategory || tab)) return;
+
+    categoryTimers.current.forEach((timer) => window.clearTimeout(timer));
+    setTransitionCategory(next_category);
+
+    const switch_delay = reducedMotion ? 40 : 600;
+    const finish_delay = reducedMotion ? 120 : 740;
+
+    categoryTimers.current = [
+      window.setTimeout(() => setTab(next_category), switch_delay),
+      window.setTimeout(() => {
+        setTransitionCategory(null);
+        categoryTimers.current = [];
+      }, finish_delay),
+    ];
+  }
 
   const total = useMemo(() => {
     const sum = cart.reduce(
@@ -447,7 +501,12 @@ export default function DriveThru() {
                   type="button"
                 >
                   Start your order
-                  <span aria-hidden="true">&#8594;</span>
+                  <span className="momentCtaIcon" aria-hidden="true">
+                    <svg viewBox="0 0 24 24">
+                      <path d="M5 12h13" />
+                      <path d="m14 7 5 5-5 5" />
+                    </svg>
+                  </span>
                 </button>
                 <button
                   className="momentHeroSecondary"
@@ -462,16 +521,25 @@ export default function DriveThru() {
 
               <ul className="momentHeroFeatures" aria-label="Drive-through benefits">
                 <li>
-                  <span className="momentFeatureIcon fresh" aria-hidden="true" />
-                  <b>Freshly prepared</b>
+                  <span className="momentFeatureNumber" aria-hidden="true">01</span>
+                  <div>
+                    <small>Made fresh</small>
+                    <b>Freshly prepared</b>
+                  </div>
                 </li>
                 <li>
-                  <span className="momentFeatureIcon car" aria-hidden="true" />
-                  <b>Order from your car</b>
+                  <span className="momentFeatureNumber" aria-hidden="true">02</span>
+                  <div>
+                    <small>Stay comfortable</small>
+                    <b>Order from your car</b>
+                  </div>
                 </li>
                 <li>
-                  <span className="momentFeatureIcon ready" aria-hidden="true" />
-                  <b>Ready in moments</b>
+                  <span className="momentFeatureNumber" aria-hidden="true">03</span>
+                  <div>
+                    <small>Quick pickup</small>
+                    <b>Ready in moments</b>
+                  </div>
                 </li>
               </ul>
             </div>
@@ -479,9 +547,9 @@ export default function DriveThru() {
             <div className="momentHeroVisual">
               <div className="momentHeroOrganic" aria-hidden="true" />
               <div className="momentHeroBeans" aria-hidden="true">
-                <i />
-                <i />
-                <i />
+                <img src={momentHeroDoodle} alt="" />
+                <img src={momentHeroDoodle} alt="" />
+                <img src={momentHeroDoodle} alt="" />
               </div>
               <div className="momentHeroHeart" aria-hidden="true">&#9825;</div>
               <div className="momentHeroSticker" aria-hidden="true">
@@ -510,9 +578,10 @@ export default function DriveThru() {
           <div className="driveTabs" id="moment-categories">
             {categories.map((category) => (
               <button
-                className={tab === category.id ? "driveTab active" : "driveTab"}
+                aria-pressed={(transitionCategory || tab) === category.id}
+                className={(transitionCategory || tab) === category.id ? "driveTab active" : "driveTab"}
                 key={category.id}
-                onClick={() => setTab(category.id)}
+                onClick={() => change_category(category.id)}
                 type="button"
               >
                 <CategoryIcon kind={category.icon} />
@@ -524,55 +593,69 @@ export default function DriveThru() {
           {loading ? <div className="driveAlert">Loading menu...</div> : null}
           {error ? <div className="driveAlert error">{error}</div> : null}
 
-          <AnimatePresence mode="wait">
+          <div className="momentCategoryStage" aria-busy={Boolean(transitionCategory)}>
+            <CategoryTransitionOverlay
+              category={transitionCategory || tab}
+              isVisible={Boolean(transitionCategory)}
+            />
             <Motion.div
-              className="driveProductGrid"
-              key={tab}
-              initial={{ opacity: 0, y: 10 }}
-              animate={{ opacity: 1, y: 0 }}
-              exit={{ opacity: 0, y: -8 }}
-              transition={{ duration: 0.22 }}
+              className="momentCategoryProducts"
+              animate={transitionCategory
+                ? reducedMotion
+                  ? { opacity: 0.45 }
+                  : { opacity: 0.24, filter: "blur(3px)", scale: 0.99 }
+                : { opacity: 1, filter: "blur(0px)", scale: 1 }}
+              transition={{ duration: reducedMotion ? 0.08 : 0.16 }}
             >
-            {active_products.map((product, index) => (
-              <Motion.article
-                className={`driveProduct driveProduct-${get_visual_kind(product)}`}
-                key={product.product_id}
-                initial={{ opacity: 0, y: 12 }}
-                animate={{ opacity: 1, y: 0 }}
-                transition={{ duration: 0.22, delay: Math.min(index * 0.035, 0.2) }}
-                whileHover={{ y: -3 }}
-              >
-                <ProductDecoration product={product} />
-                <div className="momentProductCopy">
-                  <span className="momentAvailability">
-                    <i /> {product.is_active === false ? "Unavailable" : "Available today"}
-                  </span>
-                  <h2>{product.name}</h2>
-                  <p>{product_detail(product)}</p>
-                </div>
-                <div className="driveProductBottom">
-                  <strong>{format_omr(product.price_omr)} OMR</strong>
-                  <div className="momentProductActions">
-                    <button
-                      className="momentProductDetails"
-                      onClick={() => open_product(product)}
-                      type="button"
+              <AnimatePresence mode="wait">
+                <Motion.div
+                  className="driveProductGrid"
+                  key={tab}
+                  variants={reducedMotion ? reduced_grid_variants : product_grid_variants}
+                  initial="hidden"
+                  animate="visible"
+                  exit="exit"
+                >
+                  {active_products.map((product) => (
+                    <Motion.article
+                      className={`driveProduct driveProduct-${get_visual_kind(product)}`}
+                      key={product.product_id}
+                      variants={reducedMotion ? reduced_card_variants : product_card_variants}
+                      whileHover={reducedMotion ? undefined : { y: -3 }}
                     >
-                      Details
-                    </button>
-                    <button
-                      disabled={product.is_active === false}
-                      onClick={(event) => add_item(product, 1, event.currentTarget)}
-                      type="button"
-                    >
-                      Add
-                    </button>
-                  </div>
-                </div>
-              </Motion.article>
-            ))}
+                      <ProductDecoration product={product} />
+                      <div className="momentProductCopy">
+                        <span className="momentAvailability">
+                          <i /> {product.is_active === false ? "Unavailable" : "Available today"}
+                        </span>
+                        <h2>{product.name}</h2>
+                        <p>{product_detail(product)}</p>
+                      </div>
+                      <div className="driveProductBottom">
+                        <strong>{format_omr(product.price_omr)} OMR</strong>
+                        <div className="momentProductActions">
+                          <button
+                            className="momentProductDetails"
+                            onClick={() => open_product(product)}
+                            type="button"
+                          >
+                            Details
+                          </button>
+                          <button
+                            disabled={product.is_active === false}
+                            onClick={(event) => add_item(product, 1, event.currentTarget)}
+                            type="button"
+                          >
+                            Add
+                          </button>
+                        </div>
+                      </div>
+                  </Motion.article>
+                  ))}
+                </Motion.div>
+              </AnimatePresence>
             </Motion.div>
-          </AnimatePresence>
+          </div>
         </div>
 
         <form className={`driveCart ${cart.length > 0 ? "has-items" : "is-empty"}`} onSubmit={submit_order}>

@@ -302,11 +302,43 @@
   background: var(--moment-navy);
   color: #fffaf2;
   box-shadow: 0 12px 28px rgba(7, 17, 31, 0.16);
+  transition:
+    transform 160ms ease,
+    background 160ms ease,
+    box-shadow 160ms ease;
 }
 
-.momentHeroPrimary span {
-  font-size: 19px;
-  line-height: 1;
+.momentHeroPrimary:hover {
+  background: #10283a;
+  box-shadow: 0 15px 32px rgba(59, 42, 27, 0.2);
+}
+
+.momentCtaIcon {
+  width: 29px;
+  height: 29px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(255, 250, 242, 0.34);
+  border-radius: 50%;
+  background: rgba(255, 250, 242, 0.09);
+  transition: background 160ms ease, transform 160ms ease;
+}
+
+.momentCtaIcon svg {
+  width: 15px;
+  height: 15px;
+  fill: none;
+  stroke: currentColor;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+  stroke-width: 1.8;
+}
+
+.momentHeroPrimary:hover .momentCtaIcon {
+  border-color: #d8bd84;
+  background: #d8bd84;
+  color: var(--moment-navy);
+  transform: translateX(2px);
 }
 
 .momentHeroSecondary {
@@ -336,8 +368,26 @@
   min-width: 0;
   display: flex;
   align-items: center;
-  gap: 9px;
+  gap: 10px;
   color: var(--moment-navy);
+}
+
+.momentHeroFeatures li + li {
+  border-left: 1px solid rgba(107, 67, 43, 0.16);
+  padding-left: 14px;
+}
+
+.momentHeroFeatures li div {
+  min-width: 0;
+  display: grid;
+  gap: 2px;
+}
+
+.momentHeroFeatures small {
+  color: #877768;
+  font-size: 9px;
+  font-weight: 800;
+  text-transform: uppercase;
 }
 
 .momentHeroFeatures b {
@@ -345,82 +395,18 @@
   line-height: 1.25;
 }
 
-.momentFeatureIcon {
-  position: relative;
+.momentFeatureNumber {
   flex: 0 0 auto;
-  width: 27px;
-  height: 27px;
+  width: 30px;
+  height: 30px;
+  display: grid;
+  place-items: center;
+  border: 1px solid rgba(107, 67, 43, 0.3);
+  border-radius: 50%;
+  background: rgba(255, 250, 242, 0.48);
   color: var(--moment-coffee);
-}
-
-.momentFeatureIcon.fresh::before {
-  position: absolute;
-  top: 6px;
-  left: 6px;
-  width: 13px;
-  height: 10px;
-  border: 1.5px solid currentColor;
-  border-radius: 70% 35% 70% 35%;
-  content: "";
-  transform: rotate(-28deg);
-}
-
-.momentFeatureIcon.fresh::after {
-  position: absolute;
-  top: 8px;
-  left: 13px;
-  width: 1.5px;
-  height: 13px;
-  background: currentColor;
-  content: "";
-  transform: rotate(42deg);
-}
-
-.momentFeatureIcon.car::before {
-  position: absolute;
-  top: 8px;
-  left: 3px;
-  width: 20px;
-  height: 10px;
-  border: 1.5px solid currentColor;
-  border-radius: 4px 6px 3px 3px;
-  content: "";
-  transform: skewX(-8deg);
-}
-
-.momentFeatureIcon.car::after {
-  position: absolute;
-  top: 17px;
-  left: 7px;
-  width: 4px;
-  height: 4px;
-  border-radius: 50%;
-  background: currentColor;
-  box-shadow: 11px 0 0 currentColor;
-  content: "";
-}
-
-.momentFeatureIcon.ready::before {
-  position: absolute;
-  top: 4px;
-  left: 4px;
-  width: 17px;
-  height: 17px;
-  border: 1.5px solid currentColor;
-  border-radius: 50%;
-  content: "";
-}
-
-.momentFeatureIcon.ready::after {
-  position: absolute;
-  top: 8px;
-  left: 10px;
-  width: 5px;
-  height: 8px;
-  border-right: 1.5px solid currentColor;
-  border-bottom: 1.5px solid currentColor;
-  content: "";
-  transform: rotate(42deg);
+  font-size: 9px;
+  font-weight: 900;
 }
 
 .momentHeroVisual {
@@ -456,43 +442,37 @@
 .momentHeroBeans {
   position: absolute;
   z-index: 3;
-  top: 17%;
+  top: 14%;
   left: 8%;
-  width: 72px;
-  height: 66px;
+  width: 70px;
+  height: 80px;
   pointer-events: none;
 }
 
-.momentHeroBeans i {
+.momentHeroBeans img {
   position: absolute;
-  width: 24px;
-  height: 15px;
-  border: 2px solid var(--moment-coffee);
-  border-radius: 70% 42% 70% 42%;
-  opacity: 0.7;
-  transform: rotate(-24deg);
+  width: 34px;
+  height: auto;
+  display: block;
+  opacity: 0.78;
 }
 
-.momentHeroBeans i::after {
-  position: absolute;
-  top: 1px;
-  left: 10px;
-  width: 1px;
-  height: 11px;
-  background: var(--moment-coffee);
-  content: "";
+.momentHeroBeans img:nth-child(1) {
+  top: 0;
+  left: 0;
+  transform: rotate(-14deg);
 }
 
-.momentHeroBeans i:nth-child(2) {
-  top: 26px;
-  left: 31px;
-  transform: rotate(22deg);
+.momentHeroBeans img:nth-child(2) {
+  top: 22px;
+  left: 30px;
+  transform: rotate(12deg);
 }
 
-.momentHeroBeans i:nth-child(3) {
-  top: 47px;
-  left: 4px;
-  transform: rotate(-8deg);
+.momentHeroBeans img:nth-child(3) {
+  top: 45px;
+  left: 3px;
+  transform: rotate(-5deg);
 }
 
 .momentHeroHeart {
@@ -699,6 +679,17 @@
   display: grid;
   grid-template-columns: repeat(2, minmax(0, 1fr));
   gap: 16px;
+}
+
+.momentCategoryStage {
+  position: relative;
+  min-height: 230px;
+}
+
+.momentCategoryProducts {
+  position: relative;
+  transform-origin: center top;
+  will-change: opacity, filter, transform;
 }
 
 .driveProduct {
@@ -1678,38 +1669,54 @@
   }
 
   .momentHeroFeatures li {
-    flex-direction: column;
-    align-items: flex-start;
-    gap: 5px;
+    align-items: center;
+    gap: 6px;
   }
 
   .momentHeroFeatures b {
-    font-size: 11px;
+    font-size: 10px;
     line-height: 1.2;
   }
 
-  .momentFeatureIcon {
-    width: 25px;
-    height: 25px;
+  .momentHeroFeatures small {
+    display: none;
+  }
+
+  .momentHeroFeatures li + li {
+    padding-left: 8px;
+  }
+
+  .momentFeatureNumber {
+    width: 27px;
+    height: 27px;
+    font-size: 8px;
   }
 
   .momentHeroVisual {
-    min-height: 330px;
+    min-height: 390px;
+    margin-top: 2px;
   }
 
   .momentCupCanvas-hero {
-    inset: -4% -9% -2%;
-    min-height: 360px;
+    top: -4%;
+    right: auto;
+    bottom: auto;
+    left: 50%;
+    width: 118%;
+    min-height: 410px;
+    transform: translateX(-50%) scale(1.13);
+    transform-origin: 50% 52%;
   }
 
   .momentHeroOrganic {
-    inset: 4% 4% 2% 7%;
+    inset: 3% 0 1%;
   }
 
   .momentHeroBeans {
-    top: 8%;
+    top: 7%;
     left: 7%;
-    transform: scale(0.72);
+    transform: scale(0.82);
+    transform-origin: top left;
   }
 
   .momentHeroHeart {
