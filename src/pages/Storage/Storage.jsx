@@ -15,10 +15,12 @@ export default function Storage() {
     setLoading(true);
     setError("");
     try {
-      const inv = await api.get("/api/inventory");
+      const [inv, prod] = await Promise.all([
+        api.get("/api/inventory"),
+        api.get("/api/products"),
+      ]);
       setItems(inv.data.items || []);
 
-      const prod = await api.get("/api/products");
       const snack_products = (prod.data.products || []).filter((p) => p.category === "snack");
       setSnacks(snack_products);
 

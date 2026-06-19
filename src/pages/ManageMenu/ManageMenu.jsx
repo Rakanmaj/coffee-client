@@ -16,7 +16,6 @@ export default function ManageMenu() {
 
   useEffect(() => {
     fetch_all();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const fetch_all = async () => {

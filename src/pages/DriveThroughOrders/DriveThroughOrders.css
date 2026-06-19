@@ -1,0 +1,145 @@
+.col-8 {
+  grid-column: span 8;
+}
+
+.driveAdminHeader,
+.driveAdminOrderTop,
+.driveAdminMeta,
+.driveAdminItem,
+.driveAdminActions {
+  display: flex;
+  gap: 12px;
+}
+
+.driveAdminHeader,
+.driveAdminOrderTop,
+.driveAdminItem {
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.driveQrPanel {
+  display: grid;
+  gap: 14px;
+}
+
+.driveQrBox {
+  display: grid;
+  place-items: center;
+  padding: 12px;
+  border-radius: 8px;
+  background: #ffffff;
+}
+
+.driveOrderStack {
+  display: grid;
+  gap: 14px;
+}
+
+.driveAdminOrder {
+  border-radius: 8px;
+}
+
+.driveAdminOrder.status-pending {
+  border-color: rgba(214, 178, 106, 0.62);
+}
+
+.driveAdminOrder.status-working {
+  border-color: rgba(125, 211, 252, 0.45);
+}
+
+.driveAdminOrder.status-ready {
+  border-color: rgba(34, 197, 94, 0.42);
+}
+
+.driveAdminStatus {
+  display: inline-flex;
+  align-items: center;
+  min-height: 26px;
+  padding: 0 10px;
+  margin-bottom: 8px;
+  border-radius: 999px;
+  border: 1px solid rgba(214, 178, 106, 0.35);
+  background: rgba(214, 178, 106, 0.16);
+  color: #fff;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.driveAdminTotal {
+  display: grid;
+  justify-items: end;
+  gap: 4px;
+  white-space: nowrap;
+}
+
+.driveAdminTotal span,
+.driveAdminMeta span,
+.driveAdminItem span {
+  color: var(--muted);
+  font-size: 13px;
+}
+
+.driveAdminTotal strong {
+  font-size: 20px;
+}
+
+.driveAdminMeta {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  margin: 14px 0;
+}
+
+.driveAdminMeta div {
+  display: grid;
+  gap: 5px;
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.driveAdminItems {
+  display: grid;
+  gap: 10px;
+  margin-top: 12px;
+}
+
+.driveAdminItem {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 8px;
+  background: rgba(255, 255, 255, 0.05);
+}
+
+.driveAdminItem div {
+  display: grid;
+  gap: 4px;
+}
+
+.driveAdminActions {
+  justify-content: flex-end;
+  margin-top: 14px;
+}
+
+@media (max-width: 980px) {
+  .col-8 {
+    grid-column: span 12;
+  }
+}
+
+@media (max-width: 620px) {
+  .driveAdminHeader,
+  .driveAdminOrderTop,
+  .driveAdminActions {
+    flex-direction: column;
+  }
+
+  .driveAdminMeta {
+    grid-template-columns: 1fr;
+  }
+
+  .driveAdminTotal {
+    justify-items: start;
+  }
+}

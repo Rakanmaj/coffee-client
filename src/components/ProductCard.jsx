@@ -1,6 +1,6 @@
 import React from "react";
 
-export default function ProductCard({ product, on_add }) {
+function ProductCard({ product, on_add }) {
   return (
     <div className="card cardPad">
       
@@ -21,6 +21,8 @@ export default function ProductCard({ product, on_add }) {
     </div>
   );
 }
+
+export default React.memo(ProductCard);
 
 function format_omr(n) {
   const num = Number(n || 0);

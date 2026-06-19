@@ -1,10 +1,13 @@
 import React from "react";
 import { NavLink, useNavigate } from "react-router-dom";
 import { useApp } from "../context/AppContext";
+import { useDriveThrough } from "../context/DriveThroughContext";
 
 export default function Navbar() {
   const { user, cart, logout } = useApp();
+  const { pendingCount } = useDriveThrough();
   const navigate = useNavigate();
+  const driveThroughEnabled = import.meta.env.VITE_ENABLE_DRIVE_THROUGH === "true";
 
   const cart_count = cart.reduce(
     (acc, x) => acc + Number(x.quantity),
@@ -83,6 +86,18 @@ export default function Navbar() {
             >
               Storage
             </NavLink>
+
+            {driveThroughEnabled ? (
+              <NavLink
+                to="/drive-through-orders"
+                className={({ isActive }) =>
+                  isActive ? "navLink navLinkActive" : "navLink"
+                }
+              >
+                Drive Through{" "}
+                {pendingCount > 0 ? <span className="badge">{pendingCount}</span> : null}
+              </NavLink>
+            ) : null}
 
             <NavLink
   to="/analytics"
