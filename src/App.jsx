@@ -22,7 +22,10 @@ export default function App() {
   const normalized_path = location.pathname.replace(/\/+$/, "");
   const is_drive_customer =
     driveThroughEnabled &&
-    (normalized_path === "/drive-thru" || normalized_path === "/drive-through");
+    (normalized_path === "/drive-thru" ||
+      normalized_path.startsWith("/drive-thru/") ||
+      normalized_path === "/drive-through" ||
+      normalized_path.startsWith("/drive-through/"));
 
   return (
     <AppProvider>
@@ -31,8 +34,8 @@ export default function App() {
         <Suspense fallback={null}>
         <Routes>
           <Route path="/auth" element={<Auth />} />
-          {driveThroughEnabled ? <Route path="/drive-thru" element={<DriveThru />} /> : null}
-          {driveThroughEnabled ? <Route path="/drive-through" element={<DriveThru />} /> : null}
+          {driveThroughEnabled ? <Route path="/drive-thru/*" element={<DriveThru />} /> : null}
+          {driveThroughEnabled ? <Route path="/drive-through/*" element={<DriveThru />} /> : null}
 
           <Route
             path="/"
