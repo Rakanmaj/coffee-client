@@ -142,9 +142,11 @@ export default function DriveThru() {
     return Math.round(sum * 1000) / 1000;
   }, [cart]);
 
-  function add_item(product, quantity = 1) {
+  function add_item(product, quantity = 1, source_element = null) {
     unlockAudio();
     const amount = Math.max(1, Number(quantity) || 1);
+
+    animate_product_to_cart(source_element, product);
 
     setCart((prev) => {
       const found = prev.find((item) => item.product_id === product.product_id);
@@ -167,6 +169,88 @@ export default function DriveThru() {
         },
       ];
     });
+  }
+
+  function animate_product_to_cart(source_element, product) {
+    if (!source_element || window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
+      return;
+    }
+
+    const source_rect = source_element.getBoundingClientRect();
+    const cart = document.querySelector(".driveCart");
+    const cart_target = cart?.querySelector(".driveCartCount") || cart;
+    if (!cart_target) return;
+
+    const target_rect = cart_target.getBoundingClientRect();
+    const target_is_visible = target_rect.top < window.innerHeight && target_rect.bottom > 0;
+    const start_x = source_rect.left + source_rect.width / 2;
+    const start_y = source_rect.top + source_rect.height / 2;
+    const target_x = target_is_visible
+      ? target_rect.left + target_rect.width / 2
+      : Math.min(window.innerWidth - 34, start_x + 90);
+    const target_y = target_is_visible
+      ? target_rect.top + target_rect.height / 2
+      : window.innerHeight - 24;
+    const delta_x = target_x - start_x;
+    const delta_y = target_y - start_y;
+
+    const drop = document.createElement("div");
+    const plus = document.createElement("span");
+    const label = document.createElement("b");
+    drop.className = "momentCartDrop";
+    drop.setAttribute("aria-hidden", "true");
+    drop.style.left = `${start_x}px`;
+    drop.style.top = `${start_y}px`;
+    plus.textContent = "+";
+    label.textContent = product.name;
+    drop.append(plus, label);
+    document.body.appendChild(drop);
+
+    const product_card = source_element.closest(".driveProduct");
+    product_card?.classList.remove("momentProductPop");
+    void product_card?.offsetWidth;
+    product_card?.classList.add("momentProductPop");
+
+    const flight = drop.animate(
+      [
+        {
+          opacity: 0,
+          transform: "translate(-50%, -50%) translate(0, 0) scale(0.62)",
+        },
+        {
+          opacity: 1,
+          transform: "translate(-50%, -50%) translate(0, -24px) scale(1.06) rotate(-2deg)",
+          offset: 0.2,
+        },
+        {
+          opacity: 0.96,
+          transform: `translate(-50%, -50%) translate(${delta_x * 0.45}px, ${
+            delta_y * 0.35 - 34
+          }px) scale(0.84) rotate(3deg)`,
+          offset: 0.55,
+        },
+        {
+          opacity: 0.08,
+          transform: `translate(-50%, -50%) translate(${delta_x}px, ${delta_y}px) scale(0.28) rotate(7deg)`,
+        },
+      ],
+      {
+        duration: 720,
+        easing: "cubic-bezier(0.22, 0.76, 0.24, 1)",
+        fill: "forwards",
+      }
+    );
+
+    flight.finished
+      .catch(() => {})
+      .finally(() => {
+        drop.remove();
+        product_card?.classList.remove("momentProductPop");
+        cart.classList.remove("momentCartLanding");
+        void cart.offsetWidth;
+        cart.classList.add("momentCartLanding");
+        window.setTimeout(() => cart.classList.remove("momentCartLanding"), 460);
+      });
   }
 
   function open_product(product) {
@@ -243,6 +327,17 @@ export default function DriveThru() {
     setCarType("");
     setPaymentMethod("Cash");
     setError("");
+  }
+
+  function scroll_to_section(section_id) {
+    const section = document.getElementById(section_id);
+    if (!section) return;
+
+    const reduce_motion = window.matchMedia("(prefers-reduced-motion: reduce)").matches;
+    section.scrollIntoView({
+      behavior: reduce_motion ? "auto" : "smooth",
+      block: "start",
+    });
   }
 
   if (order) {
@@ -322,22 +417,89 @@ export default function DriveThru() {
     <>
       <AnimatePresence>{showSplash ? <MomentSplash key="moment-splash" /> : null}</AnimatePresence>
       <main className="drivePage">
-        <section className="momentHero">
-        <div className="momentHeroCopy">
-          <div className="driveBrandMark">Moment Drive-Through</div>
-          <h1>Your moment, made fresh.</h1>
-          <p>Order from your car and watch your cup come to life while we prepare it.</p>
-        </div>
-        {showSplash ? (
-          <div className="momentCupCanvas momentCupCanvas-hero" aria-hidden="true" />
-        ) : (
-          <Suspense fallback={<div className="momentSceneFallback" aria-hidden="true" />}>
-            <MomentCupScene status="showcase" mode="hero" />
-          </Suspense>
-        )}
+        <section className="momentHero" aria-labelledby="moment-hero-title">
+          <div className="momentHeroInner">
+            <div className="momentHeroCopy">
+              <div className="momentHeroEyebrow">
+                <span aria-hidden="true" />
+                Moment Drive-Through
+              </div>
+
+              <h1 id="moment-hero-title">
+                Your moment,
+                <span> brewed fresh.</span>
+              </h1>
+
+              <p className="momentHeroLead">
+                From your car to your hands, enjoy a smooth ordering experience with drinks
+                prepared fresh, just for you.
+              </p>
+
+              <div className="momentHeroScript">
+                <span aria-hidden="true" />
+                Brewed with love
+              </div>
+
+              <div className="momentHeroActions">
+                <button
+                  className="momentHeroPrimary"
+                  onClick={() => scroll_to_section("moment-menu")}
+                  type="button"
+                >
+                  Start your order
+                  <span aria-hidden="true">&#8594;</span>
+                </button>
+                <button
+                  className="momentHeroSecondary"
+                  onClick={() => scroll_to_section("moment-categories")}
+                  type="button"
+                >
+                  Browse menu
+                </button>
+              </div>
+
+              <div className="momentHeroHelper">Freshly brewed, ready in moments</div>
+
+              <ul className="momentHeroFeatures" aria-label="Drive-through benefits">
+                <li>
+                  <span className="momentFeatureIcon fresh" aria-hidden="true" />
+                  <b>Freshly prepared</b>
+                </li>
+                <li>
+                  <span className="momentFeatureIcon car" aria-hidden="true" />
+                  <b>Order from your car</b>
+                </li>
+                <li>
+                  <span className="momentFeatureIcon ready" aria-hidden="true" />
+                  <b>Ready in moments</b>
+                </li>
+              </ul>
+            </div>
+
+            <div className="momentHeroVisual">
+              <div className="momentHeroOrganic" aria-hidden="true" />
+              <div className="momentHeroBeans" aria-hidden="true">
+                <i />
+                <i />
+                <i />
+              </div>
+              <div className="momentHeroHeart" aria-hidden="true">&#9825;</div>
+              <div className="momentHeroSticker" aria-hidden="true">
+                <span>Made for</span>
+                your moment
+              </div>
+              {showSplash ? (
+                <div className="momentCupCanvas momentCupCanvas-hero" aria-hidden="true" />
+              ) : (
+                <Suspense fallback={<div className="momentSceneFallback" aria-hidden="true" />}>
+                  <MomentCupScene status="showcase" mode="hero" />
+                </Suspense>
+              )}
+            </div>
+          </div>
         </section>
 
-      <section className="driveShell">
+      <section className="driveShell" id="moment-menu">
         <div className="driveMenu">
           <div className="momentMenuHeading">
             <span>Brewed with love</span>
@@ -345,7 +507,7 @@ export default function DriveThru() {
             <p>Quick to browse, freshly prepared, and delivered to your car.</p>
           </div>
 
-          <div className="driveTabs">
+          <div className="driveTabs" id="moment-categories">
             {categories.map((category) => (
               <button
                 className={tab === category.id ? "driveTab active" : "driveTab"}
@@ -400,7 +562,7 @@ export default function DriveThru() {
                     </button>
                     <button
                       disabled={product.is_active === false}
-                      onClick={() => add_item(product)}
+                      onClick={(event) => add_item(product, 1, event.currentTarget)}
                       type="button"
                     >
                       Add
@@ -563,8 +725,8 @@ export default function DriveThru() {
                 <button
                   className="drivePrimary"
                   disabled={selectedProduct.is_active === false}
-                  onClick={() => {
-                    add_item(selectedProduct, detailQuantity);
+                  onClick={(event) => {
+                    add_item(selectedProduct, detailQuantity, event.currentTarget);
                     close_product();
                   }}
                   type="button"
