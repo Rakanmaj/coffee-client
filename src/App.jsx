@@ -1,28 +1,43 @@
-import React from "react";
-import { Routes, Route, Navigate } from "react-router-dom";
+import React, { lazy, Suspense } from "react";
+import { Routes, Route, Navigate, useLocation } from "react-router-dom";
 import { AppProvider } from "./context/AppContext";
+import { DriveThroughProvider } from "./context/DriveThroughContext";
 import RequireAuth from "./components/RequireAuth";
 import Navbar from "./components/Navbar";
-import Analytics from "./pages/Analytics/Analytics";
-import Auth from "./pages/Auth/Auth";
-import Menu from "./pages/Menu/Menu";
-import Cart from "./pages/Cart/Cart";
-import Checkout from "./pages/Checkout/Checkout";
-import Reports from "./pages/Reports/Reports";
-import ManageMenu from "./pages/ManageMenu/ManageMenu";
-import Storage from "./pages/Storage/Storage";
+
+const Analytics = lazy(() => import("./pages/Analytics/Analytics"));
+const Auth = lazy(() => import("./pages/Auth/Auth"));
+const Menu = lazy(() => import("./pages/Menu/Menu"));
+const Cart = lazy(() => import("./pages/Cart/Cart"));
+const Checkout = lazy(() => import("./pages/Checkout/Checkout"));
+const Reports = lazy(() => import("./pages/Reports/Reports"));
+const ManageMenu = lazy(() => import("./pages/ManageMenu/ManageMenu"));
+const Storage = lazy(() => import("./pages/Storage/Storage"));
+const DriveThru = lazy(() => import("./pages/DriveThru/DriveThru"));
+const DriveThroughOrders = lazy(() => import("./pages/DriveThroughOrders/DriveThroughOrders"));
 
 export default function App() {
+  const location = useLocation();
+  const driveThroughEnabled = import.meta.env.VITE_ENABLE_DRIVE_THROUGH === "true";
+  const normalized_path = location.pathname.replace(/\/+$/, "");
+  const is_drive_customer =
+    driveThroughEnabled &&
+    (normalized_path === "/drive-thru" || normalized_path === "/drive-through");
+
   return (
     <AppProvider>
-      <Navbar />
-      <Routes>
-        <Route path="/auth" element={<Auth />} />
+      <DriveThroughProvider enabled={driveThroughEnabled && !is_drive_customer}>
+        {!is_drive_customer ? <Navbar /> : null}
+        <Suspense fallback={null}>
+        <Routes>
+          <Route path="/auth" element={<Auth />} />
+          {driveThroughEnabled ? <Route path="/drive-thru" element={<DriveThru />} /> : null}
+          {driveThroughEnabled ? <Route path="/drive-through" element={<DriveThru />} /> : null}
 
-        <Route
-          path="/"
-          element={<Navigate to="/menu" replace />}
-        />
+          <Route
+            path="/"
+            element={<Navigate to="/menu" replace />}
+          />
 
         <Route
           path="/menu"
@@ -78,6 +93,17 @@ export default function App() {
           }
         />
 
+        {driveThroughEnabled ? (
+          <Route
+            path="/drive-through-orders"
+            element={
+              <RequireAuth>
+                <DriveThroughOrders />
+              </RequireAuth>
+            }
+          />
+        ) : null}
+
         <Route
   path="/analytics"
   element={
@@ -87,8 +113,10 @@ export default function App() {
   }
 />
 
-        <Route path="*" element={<Navigate to="/menu" replace />} />
-      </Routes>
+          <Route path="*" element={<Navigate to="/menu" replace />} />
+        </Routes>
+        </Suspense>
+      </DriveThroughProvider>
     </AppProvider>
   );
 }

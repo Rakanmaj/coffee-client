@@ -10,12 +10,12 @@ export default function Auth() {
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState("");
 
-  const { login, user } = useApp();
+  const { login, user, authReady } = useApp();
   const navigate = useNavigate();
 
   useEffect(() => {
-    if (user?.user_id) navigate("/menu", { replace: true });
-  }, [user, navigate]);
+    if (authReady && user?.user_id) navigate("/menu", { replace: true });
+  }, [authReady, user, navigate]);
 
   const handle_submit = async (e) => {
     e.preventDefault();
@@ -24,7 +24,7 @@ export default function Auth() {
 
     try {
       const res = await api.post("/api/auth/login", { email, password });
-      login(res.data.user);
+      login(res.data.user, res.data.token);
       navigate("/menu", { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || err.message || "Login failed");
@@ -73,9 +73,6 @@ export default function Auth() {
               {loading ? "Logging in..." : "Login"}
             </button>
 
-            <div className="subTitle" style={{ marginTop: 14 }}>
-              (Seeded cashier will work once backend is ready)
-            </div>
           </form>
         </div>
       </div>

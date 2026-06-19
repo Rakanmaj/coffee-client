@@ -106,6 +106,7 @@ export default function Analytics() {
   const payments = data?.payments;
   const top = data?.top_products;
   const cat = data?.category_performance;
+  const productSales = data?.product_sales || [];
   const peak = data?.peak;
   const daily = data?.daily;
 
@@ -335,6 +336,40 @@ export default function Analytics() {
               <div style={{ marginTop: 10, display: "flex", gap: 18, flexWrap: "wrap" }}>
                 <div><b>Best Category by Revenue:</b> {cat?.best_by_revenue || "—"}</div>
                 <div><b>Best Category by Units:</b> {cat?.best_by_units || "—"}</div>
+              </div>
+            </div>
+          </div>
+
+          {/* Sales by product */}
+          <div className="card" style={{ marginTop: 14 }}>
+            <div className="cardPad">
+              <div className="subTitle" style={{ marginBottom: 10 }}>Sales by Product</div>
+              <div className="tableWrap">
+                <table>
+                  <thead>
+                    <tr>
+                      <th>Product</th>
+                      <th>Category</th>
+                      <th>Units Sold</th>
+                      <th>Revenue (OMR)</th>
+                    </tr>
+                  </thead>
+                  <tbody>
+                    {productSales.map((product) => (
+                      <tr key={product.product_id}>
+                        <td style={{ fontWeight: 800 }}>{product.name}</td>
+                        <td>{product.category}</td>
+                        <td>{product.units}</td>
+                        <td>{fmtOMR(product.revenue_omr)}</td>
+                      </tr>
+                    ))}
+                    {!productSales.length ? (
+                      <tr>
+                        <td colSpan={4}>No products found.</td>
+                      </tr>
+                    ) : null}
+                  </tbody>
+                </table>
               </div>
             </div>
           </div>

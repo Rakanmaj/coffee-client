@@ -2,6 +2,7 @@ import React, { useEffect, useMemo, useState } from "react";
 import api from "../../api/api";
 import { useApp } from "../../context/AppContext";
 import ProductCard from "../../components/ProductCard";
+import { getCustomerMenuCategory } from "../../utils/displayCategory";
 
 export default function Menu() {
   const { add_to_cart } = useApp();
@@ -31,7 +32,8 @@ export default function Menu() {
   const grouped = useMemo(() => {
     const out = { hot: [], cold: [], snack: [] };
     for (const p of products) {
-      if (out[p.category]) out[p.category].push(p);
+      const displayCategory = getCustomerMenuCategory(p);
+      if (out[displayCategory]) out[displayCategory].push(p);
     }
     return out;
   }, [products]);

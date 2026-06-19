@@ -1,29 +1,69 @@
-import React, { createContext, useContext, useMemo, useState } from "react";
+import React, { createContext, useCallback, useContext, useEffect, useMemo, useState } from "react";
+import api from "../api/api";
 
 const AppContext = createContext(null);
 
 export function AppProvider({ children }) {
-  const [user, setUser] = useState(() => {
-    const raw = localStorage.getItem("user");
-    return raw ? JSON.parse(raw) : null;
-  });
+  const [user, setUser] = useState(null);
+  const [authReady, setAuthReady] = useState(() => !localStorage.getItem("authToken"));
 
   // cart items:
   // { product_id, name, price_omr, quantity, note, category }
   const [cart, setCart] = useState([]);
 
-  const login = (user_obj) => {
-    setUser(user_obj);
-    localStorage.setItem("user", JSON.stringify(user_obj));
-  };
+  useEffect(() => {
+    const token = localStorage.getItem("authToken");
+    if (!token) return;
 
-  const logout = () => {
+    let active = true;
+    api
+      .get("/api/auth/session")
+      .then((res) => {
+        if (!active) return;
+        setUser(res.data.user);
+        localStorage.setItem("user", JSON.stringify(res.data.user));
+      })
+      .catch(() => {
+        if (!active) return;
+        setUser(null);
+        localStorage.removeItem("authToken");
+        localStorage.removeItem("user");
+      })
+      .finally(() => {
+        if (active) setAuthReady(true);
+      });
+
+    return () => {
+      active = false;
+    };
+  }, []);
+
+  useEffect(() => {
+    const clearExpiredSession = () => {
+      setUser(null);
+      setCart([]);
+      setAuthReady(true);
+    };
+    window.addEventListener("auth:expired", clearExpiredSession);
+    return () => window.removeEventListener("auth:expired", clearExpiredSession);
+  }, []);
+
+  const login = useCallback((user_obj, token) => {
+    setUser(user_obj);
+    setAuthReady(true);
+    localStorage.setItem("user", JSON.stringify(user_obj));
+    localStorage.setItem("authToken", token);
+  }, []);
+
+  const logout = useCallback(() => {
     setUser(null);
     setCart([]);
+    setAuthReady(true);
     localStorage.removeItem("user");
-  };
+    localStorage.removeItem("authToken");
+  }, []);
 
-  const add_to_cart = (product) => {
+  const add_to_cart = useCallback((product) => {
     setCart((prev) => {
       const found = prev.find((x) => x.product_id === product.product_id);
       if (found) {
@@ -45,13 +85,13 @@ export function AppProvider({ children }) {
         },
       ];
     });
-  };
+  }, []);
 
-  const remove_from_cart = (product_id) => {
+  const remove_from_cart = useCallback((product_id) => {
     setCart((prev) => prev.filter((x) => x.product_id !== product_id));
-  };
+  }, []);
 
-  const set_qty = (product_id, quantity) => {
+  const set_qty = useCallback((product_id, quantity) => {
     const q = Number(quantity);
     if (Number.isNaN(q)) return;
 
@@ -60,15 +100,15 @@ export function AppProvider({ children }) {
         .map((x) => (x.product_id === product_id ? { ...x, quantity: q } : x))
         .filter((x) => x.quantity > 0)
     );
-  };
+  }, []);
 
-  const set_note = (product_id, note) => {
+  const set_note = useCallback((product_id, note) => {
     setCart((prev) =>
       prev.map((x) => (x.product_id === product_id ? { ...x, note } : x))
     );
-  };
+  }, []);
 
-  const clear_cart = () => setCart([]);
+  const clear_cart = useCallback(() => setCart([]), []);
 
   const subtotal_omr = useMemo(() => {
     const sum = cart.reduce(
@@ -78,22 +118,39 @@ export function AppProvider({ children }) {
     return round_omr(sum);
   }, [cart]);
 
-  const value = {
-    user,
-    cart,
-    subtotal_omr,
-    login,
-    logout,
-    add_to_cart,
-    remove_from_cart,
-    set_qty,
-    set_note,
-    clear_cart,
-  };
+  const value = useMemo(
+    () => ({
+      user,
+      authReady,
+      cart,
+      subtotal_omr,
+      login,
+      logout,
+      add_to_cart,
+      remove_from_cart,
+      set_qty,
+      set_note,
+      clear_cart,
+    }),
+    [
+      user,
+      authReady,
+      cart,
+      subtotal_omr,
+      login,
+      logout,
+      add_to_cart,
+      remove_from_cart,
+      set_qty,
+      set_note,
+      clear_cart,
+    ]
+  );
 
   return <AppContext.Provider value={value}>{children}</AppContext.Provider>;
 }
 
+// eslint-disable-next-line react-refresh/only-export-components
 export function useApp() {
   const ctx = useContext(AppContext);
   if (!ctx) throw new Error("useApp must be used inside AppProvider");
