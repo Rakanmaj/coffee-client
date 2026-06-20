@@ -1,11 +1,6 @@
 import { AnimatePresence, motion as Motion, useReducedMotion } from "framer-motion";
+import { useDriveThroughLanguage } from "../context/driveThroughLanguage";
 import "./CategoryTransitionOverlay.css";
-
-const category_copy = {
-  hot: { title: "Hot Moment", arabic: "دافئ وطازج" },
-  cold: { title: "Cold Moment", arabic: "بارد ومنعش" },
-  snack: { title: "Snack Moment", arabic: "لقمة حلوة" },
-};
 
 function stroke_motion(reduced_motion, delay = 0) {
   return {
@@ -66,9 +61,14 @@ const drawings = {
 };
 
 export default function CategoryTransitionOverlay({ category, isVisible }) {
+  const { t } = useDriveThroughLanguage();
   const reduced_motion = useReducedMotion();
   const normalized_category = category === "snacks" ? "snack" : category;
-  const copy = category_copy[normalized_category] || category_copy.hot;
+  const copy = {
+    hot: { title: t("hotMoment"), subtitle: t("hotMomentSub") },
+    cold: { title: t("coldMoment"), subtitle: t("coldMomentSub") },
+    snack: { title: t("snackMoment"), subtitle: t("snackMomentSub") },
+  }[normalized_category];
   const Drawing = drawings[normalized_category] || HotDrawing;
 
   return (
@@ -99,7 +99,7 @@ export default function CategoryTransitionOverlay({ category, isVisible }) {
               transition={{ duration: 0.18, delay: reduced_motion ? 0 : 0.34 }}
             >
               <strong>{copy.title}</strong>
-              <span lang="ar" dir="rtl">{copy.arabic}</span>
+              <span>{copy.subtitle}</span>
             </Motion.div>
           </Motion.div>
         </Motion.div>

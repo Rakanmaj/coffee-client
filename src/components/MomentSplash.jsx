@@ -1,5 +1,6 @@
 import React from "react";
 import { motion as Motion, useReducedMotion } from "framer-motion";
+import { useDriveThroughLanguage } from "../context/driveThroughLanguage";
 
 const ink = "#07111F";
 const coffee = "#6B432B";
@@ -14,16 +15,17 @@ function draw(delay, duration) {
 }
 
 export default function MomentSplash() {
+  const { t } = useDriveThroughLanguage();
   const reduceMotion = useReducedMotion();
   const timing = reduceMotion ? 0.01 : 1;
 
   return (
-    <main className="momentDrawSplash" aria-label="Moment Drive-Through is opening">
+    <main className="momentDrawSplash" aria-label={t("splashLabel")}>
       <Motion.svg
         className="momentDrawArtwork"
         viewBox="0 0 360 340"
         role="img"
-        aria-label="Moment logo drawn with coffee beans and a car"
+        aria-label={t("splashLogoLabel")}
         initial="hidden"
         animate="visible"
       >
@@ -92,7 +94,7 @@ export default function MomentSplash() {
           animate={{ opacity: 0.68, y: 0 }}
           transition={{ delay: 1.8 * timing, duration: 0.28 * timing, ease: "easeOut" }}
         >
-          Brewed for your moment
+          {t("splashLine")}
         </Motion.text>
       </Motion.svg>
     </main>
