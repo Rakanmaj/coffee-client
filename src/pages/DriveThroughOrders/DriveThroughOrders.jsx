@@ -1,5 +1,6 @@
-import React from "react";
+import React, { useEffect, useState } from "react";
 import { QRCodeSVG } from "qrcode.react";
+import api from "../../api/api";
 import { useDriveThrough } from "../../context/DriveThroughContext";
 import "./DriveThroughOrders.css";
 
@@ -7,6 +8,9 @@ const RAILWAY_CLIENT_URL = "https://coffee-client-production.up.railway.app";
 const CUSTOMER_QR_URL = `${RAILWAY_CLIENT_URL}/drive-thru`;
 
 export default function DriveThroughOrders() {
+  const [orderingEnabled, setOrderingEnabled] = useState(null);
+  const [availabilitySaving, setAvailabilitySaving] = useState(false);
+  const [availabilityError, setAvailabilityError] = useState("");
   const {
     orders,
     pendingCount,
@@ -17,6 +21,41 @@ export default function DriveThroughOrders() {
     updateOrder,
   } = useDriveThrough();
   const publicUrl = CUSTOMER_QR_URL;
+
+  useEffect(() => {
+    let mounted = true;
+
+    api.get("/api/drive-through/availability")
+      .then((response) => {
+        if (mounted) setOrderingEnabled(Boolean(response.data.enabled));
+      })
+      .catch(() => {
+        if (mounted) setAvailabilityError("Could not load the ordering setting.");
+      });
+
+    return () => {
+      mounted = false;
+    };
+  }, []);
+
+  async function toggleAvailability() {
+    if (orderingEnabled === null || availabilitySaving) return;
+
+    const next_enabled = !orderingEnabled;
+    setAvailabilitySaving(true);
+    setAvailabilityError("");
+
+    try {
+      const response = await api.put("/api/drive-through/availability", {
+        enabled: next_enabled,
+      });
+      setOrderingEnabled(Boolean(response.data.enabled));
+    } catch {
+      setAvailabilityError("Could not update the ordering setting.");
+    } finally {
+      setAvailabilitySaving(false);
+    }
+  }
 
   return (
     <div className="container page">
@@ -36,6 +75,30 @@ export default function DriveThroughOrders() {
       <div className="grid" style={{ marginTop: 14 }}>
         <div className="col-4">
           <div className="panel">
+            <div className="cardPad driveAvailabilityControl">
+              <div>
+                <div className="driveAvailabilityTitle">Drive-through ordering</div>
+                <div className="subTitle">
+                  When disabled, customers will see an unavailable page instead of the ordering menu.
+                </div>
+              </div>
+              <button
+                className={`driveAvailabilitySwitch ${orderingEnabled ? "enabled" : ""}`}
+                aria-checked={Boolean(orderingEnabled)}
+                aria-label="Drive-through ordering"
+                disabled={orderingEnabled === null || availabilitySaving}
+                onClick={toggleAvailability}
+                role="switch"
+                type="button"
+              >
+                <span aria-hidden="true" />
+                <b>{orderingEnabled ? "Enabled" : "Disabled"}</b>
+              </button>
+              {availabilityError ? <div className="alert alertError">{availabilityError}</div> : null}
+            </div>
+          </div>
+
+          <div className="panel" style={{ marginTop: 14 }}>
             <div className="cardPad driveQrPanel">
               <div>
                 <div style={{ fontWeight: 900, fontSize: 16 }}>Customer QR</div>

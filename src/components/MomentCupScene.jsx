@@ -9,10 +9,12 @@ import {
   useGLTF,
 } from "@react-three/drei";
 import * as THREE from "three";
+import { useDriveThroughLanguage } from "../context/driveThroughLanguage";
 
 const MODEL_URL = "/models/moment-cup.glb";
 
 export default function MomentCupScene({ status = "showcase", mode = "hero" }) {
+  const { t } = useDriveThroughLanguage();
   const compact = mode === "status";
   const [modelReady, setModelReady] = useState(false);
   const loading = !modelReady;
@@ -22,7 +24,7 @@ export default function MomentCupScene({ status = "showcase", mode = "hero" }) {
       {loading ? (
         <div className="momentModelLoader visible" aria-hidden="true">
           <span />
-          <b>Crafting your Moment...</b>
+          <b>{t("craftingMoment")}</b>
         </div>
       ) : null}
       <Canvas

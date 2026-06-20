@@ -20,7 +20,14 @@ export async function unlockAudio() {
   if (!ctx) return false;
 
   if (ctx.state === "suspended") {
-    await ctx.resume();
+    try {
+      await Promise.race([
+        ctx.resume(),
+        new Promise((resolve) => window.setTimeout(resolve, 300)),
+      ]);
+    } catch {
+      return false;
+    }
   }
 
   return ctx.state === "running";

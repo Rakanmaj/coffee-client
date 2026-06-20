@@ -5,16 +5,22 @@ import api from "../../api/api";
 import { playCustomerTone, playReadyTone, unlockAudio } from "../../utils/sounds";
 import { getCustomerMenuCategory } from "../../utils/displayCategory";
 import CategoryTransitionOverlay from "../../components/CategoryTransitionOverlay";
+import DriveLanguageSwitch from "../../components/DriveLanguageSwitch";
+import DriveThroughAvailabilityState from "../../components/DriveThroughAvailabilityState";
 import MomentSplash from "../../components/MomentSplash";
+import {
+  DriveThroughLanguageProvider,
+} from "../../context/DriveThroughLanguageContext";
+import { useDriveThroughLanguage } from "../../context/driveThroughLanguage";
 import "./DriveThru.css";
 
 const loadMomentCupScene = () => import("../../components/MomentCupScene");
 const MomentCupScene = lazy(loadMomentCupScene);
 
 const categories = [
-  { id: "hot", label: "Hot", icon: "coffee" },
-  { id: "cold", label: "Cold", icon: "ice" },
-  { id: "snack", label: "Snacks", icon: "spark" },
+  { id: "hot", labelKey: "hot", icon: "coffee" },
+  { id: "cold", labelKey: "cold", icon: "ice" },
+  { id: "snack", labelKey: "snacks", icon: "spark" },
 ];
 
 const product_grid_variants = {
@@ -54,8 +60,17 @@ function read_session_cart() {
 }
 
 export default function DriveThru() {
+  return (
+    <DriveThroughLanguageProvider>
+      <DriveThruContent />
+    </DriveThroughLanguageProvider>
+  );
+}
+
+function DriveThruContent() {
   const location = useLocation();
   const navigate = useNavigate();
+  const { language, direction, t } = useDriveThroughLanguage();
   const [products, setProducts] = useState([]);
   const [tab, setTab] = useState("hot");
   const [cart, setCart] = useState(read_session_cart);
@@ -68,6 +83,8 @@ export default function DriveThru() {
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [error, setError] = useState("");
+  const [availabilityState, setAvailabilityState] = useState("loading");
+  const [loadAttempt, setLoadAttempt] = useState(0);
   const [transitionCategory, setTransitionCategory] = useState(null);
   const categoryTimers = useRef([]);
   const reducedMotion = useReducedMotion();
@@ -80,26 +97,49 @@ export default function DriveThru() {
   useEffect(() => {
     let mounted = true;
 
-    async function load_menu() {
+    async function load_customer_page() {
       setLoading(true);
       setError("");
+      setAvailabilityState("loading");
+
+      try {
+        const availability = await api.get("/api/drive-through/availability");
+        if (!availability.data.enabled) {
+          if (mounted) {
+            setAvailabilityState("disabled");
+            setLoading(false);
+          }
+          return;
+        }
+
+        if (mounted) setAvailabilityState("enabled");
+      } catch {
+        if (mounted) {
+          setAvailabilityState("error");
+          setLoading(false);
+        }
+        return;
+      }
 
       try {
         const res = await api.get("/api/drive-through/menu");
         if (mounted) setProducts(res.data.products || []);
-      } catch (err) {
-        if (mounted) setError(err.response?.data?.message || err.message || "Failed to load menu");
+      } catch {
+        if (mounted) setError("menuLoadFailed");
       } finally {
         if (mounted) setLoading(false);
       }
     }
 
-    load_menu();
-    restore_order();
+    load_customer_page();
 
     return () => {
       mounted = false;
     };
+  }, [loadAttempt]);
+
+  useEffect(() => {
+    restore_order();
   }, []);
 
   useEffect(() => () => {
@@ -370,12 +410,12 @@ export default function DriveThru() {
     setError("");
 
     if (cart.length === 0) {
-      setError("Choose at least one item.");
+      setError("chooseItem");
       return;
     }
 
     if (!carType.trim()) {
-      setError("Tell us your car type so we can find you.");
+      setError("carRequired");
       return;
     }
 
@@ -396,7 +436,13 @@ export default function DriveThru() {
       localStorage.setItem("driveThroughOrderId", res.data.order.id);
       setCart([]);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Could not send order");
+      if (err.response?.status === 503) {
+        setAvailabilityState("disabled");
+        setError("serviceClosedDuringOrder");
+        navigate(drive_base_path);
+      } else {
+        setError("orderFailed");
+      }
     } finally {
       setSubmitting(false);
     }
@@ -427,19 +473,21 @@ export default function DriveThru() {
       <form className="driveCart driveCheckoutPageForm has-items" onSubmit={submit_order}>
         <div className="driveCartHead">
           <div>
-            <h2>Place your order</h2>
-            <p>{cart_item_count} item{cart_item_count === 1 ? "" : "s"} selected</p>
+            <h2>{t("placeOrder")}</h2>
+            <p>{cart_item_count} {t(cart_item_count === 1 ? "item" : "items")} {t("selected")}</p>
           </div>
           <strong className="driveCartCount">{cart_item_count}</strong>
         </div>
+
+        {error ? <div className="driveAlert error">{t(error)}</div> : null}
 
         <div className="driveCartItems">
           {cart.map((item) => (
             <div className="driveCartItem" key={item.product_id}>
               <div className="driveCartLine">
                 <div>
-                  <strong>{item.name}</strong>
-                  <span>{format_omr(item.price_omr)} OMR</span>
+                  <strong className="momentProductName" dir="ltr">{item.name}</strong>
+                  <span className="momentPrice" dir="ltr">{format_omr(item.price_omr)} OMR</span>
                 </div>
                 <div className="driveStepper">
                   <button onClick={() => change_qty(item.product_id, -1)} type="button">
@@ -452,7 +500,8 @@ export default function DriveThru() {
                 </div>
               </div>
               <textarea
-                placeholder="Optional note for this item"
+                dir="auto"
+                placeholder={t("optionalNote")}
                 value={item.note}
                 onChange={(e) => set_note(item.product_id, e.target.value)}
               />
@@ -462,9 +511,10 @@ export default function DriveThru() {
 
         <div className="driveCheckoutBlock">
           <label className="driveField">
-            <span>Car type</span>
+            <span>{t("carType")}</span>
             <input
-              placeholder="White Toyota Camry, plate 1234"
+              dir="auto"
+              placeholder={t("carPlaceholder")}
               value={carType}
               onChange={(e) => setCarType(e.target.value)}
               required
@@ -472,21 +522,21 @@ export default function DriveThru() {
           </label>
 
           <div className="drivePay">
-            <span>Payment</span>
+            <span>{t("payment")}</span>
             <div>
               <button
                 className={paymentMethod === "Cash" ? "selected" : ""}
                 onClick={() => setPaymentMethod("Cash")}
                 type="button"
               >
-                Cash
+                {t("cash")}
               </button>
               <button
                 className={paymentMethod === "Visa" ? "selected" : ""}
                 onClick={() => setPaymentMethod("Visa")}
                 type="button"
               >
-                Visa
+                {t("visa")}
               </button>
             </div>
           </div>
@@ -494,12 +544,12 @@ export default function DriveThru() {
 
         <div className="driveCartFooter">
           <div className="driveTotal">
-            <span>Total</span>
-            <strong>{format_omr(total)} OMR</strong>
+            <span>{t("total")}</span>
+            <strong className="momentPrice" dir="ltr">{format_omr(total)} OMR</strong>
           </div>
 
           <button className="drivePrimary" disabled={submitting} type="submit">
-            {submitting ? "Sending..." : "Place order"}
+            {submitting ? t("sending") : t("placeOrderButton")}
           </button>
         </div>
       </form>
@@ -512,10 +562,13 @@ export default function DriveThru() {
     return (
       <>
         <AnimatePresence>{showSplash ? <MomentSplash key="moment-splash" /> : null}</AnimatePresence>
-        <main className="drivePage">
+        <main className="drivePage" lang={language} dir={direction}>
           <section className={`driveStatus status-${order.status}`}>
             <div className="driveStatusStage">
-              <div className="driveBrandMark">Moment Drive-Through</div>
+              <div className="momentStatusTopbar">
+                <div className="driveBrandMark">{t("brand")}</div>
+                <DriveLanguageSwitch />
+              </div>
               {showSplash ? (
                 <div className="momentCupCanvas momentCupCanvas-status" aria-hidden="true" />
               ) : (
@@ -524,43 +577,43 @@ export default function DriveThru() {
                 </Suspense>
               )}
               <div className="driveStatusCopy">
-                <span className="driveStatusPill">{status_pill(order.status)}</span>
-                <h1>{status_title(order.status)}</h1>
-                <p>{status_body(order.status)}</p>
+                <span className="driveStatusPill">{status_pill(order.status, t)}</span>
+                <h1>{status_title(order.status, t)}</h1>
+                <p>{status_body(order.status, t)}</p>
               </div>
-              <StatusProgress status={order.status} />
+              <StatusProgress status={order.status} t={t} />
             </div>
 
             <div className="driveStatusDetails">
               <div className="driveReceipt">
                 <div>
-                  <span>Order</span>
+                  <span>{t("order")}</span>
                   <strong>{order.order_id ? `#${order.order_id}` : order.id.slice(0, 8)}</strong>
                 </div>
                 <div>
-                  <span>Car</span>
-                  <strong>{order.car_type}</strong>
+                  <span>{t("car")}</span>
+                  <strong dir="auto">{order.car_type}</strong>
                 </div>
                 <div>
-                  <span>Payment</span>
-                  <strong>{order.payment_method}</strong>
+                  <span>{t("payment")}</span>
+                  <strong>{payment_label(order.payment_method, t)}</strong>
                 </div>
                 <div>
-                  <span>Total</span>
-                  <strong>{format_omr(order.total_amount_omr)} OMR</strong>
+                  <span>{t("total")}</span>
+                  <strong className="momentPrice" dir="ltr">{format_omr(order.total_amount_omr)} OMR</strong>
                 </div>
               </div>
 
               <div className="driveOrderItems">
                 <div className="driveOrderItemsHeader">
-                  <span>Items</span>
+                  <span>{t("orderItems")}</span>
                   <strong>{orderItemCount}</strong>
                 </div>
                 {order.items.map((item) => (
                   <div className="driveOrderItem" key={item.product_id}>
                     <div>
-                      <strong>{item.name}</strong>
-                      {item.note ? <span>{item.note}</span> : null}
+                      <strong className="momentProductName" dir="ltr">{item.name}</strong>
+                      {item.note ? <span dir="auto">{item.note}</span> : null}
                     </div>
                     <b>x{item.quantity}</b>
                   </div>
@@ -570,7 +623,7 @@ export default function DriveThru() {
 
             {["delivered", "not_delivered"].includes(order.status) ? (
               <button className="drivePrimary" onClick={start_new_order} type="button">
-                Start New Order
+                {t("startNewOrder")}
               </button>
             ) : null}
           </section>
@@ -579,35 +632,47 @@ export default function DriveThru() {
     );
   }
 
+  if (availabilityState !== "enabled") {
+    return (
+      <DriveThroughAvailabilityState
+        state={availabilityState}
+        onRetry={() => setLoadAttempt((attempt) => attempt + 1)}
+      />
+    );
+  }
+
   if (is_checkout_page) {
     return (
       <>
         <AnimatePresence>{showSplash ? <MomentSplash key="moment-splash" /> : null}</AnimatePresence>
-        <main className="drivePage driveCheckoutPage">
+        <main className="drivePage driveCheckoutPage" lang={language} dir={direction}>
           <header className="momentCheckoutHeader">
             <button className="momentCheckoutBack" onClick={return_to_menu} type="button">
               <svg viewBox="0 0 24 24" aria-hidden="true">
                 <path d="M19 12H6" />
                 <path d="m10 7-5 5 5 5" />
               </svg>
-              Back to menu
+              {t("backToMenu")}
             </button>
-            <div className="momentMenuEyebrow">
-              <span aria-hidden="true" />
-              Moment Drive-Through
+            <div className="momentCustomerTopline">
+              <div className="momentMenuEyebrow">
+                <span aria-hidden="true" />
+                {t("brand")}
+              </div>
+              <DriveLanguageSwitch />
             </div>
-            <h1>Review your order.</h1>
-            <p>Adjust your items, add notes, and tell us which car to look for.</p>
+            <h1>{t("reviewTitle")}</h1>
+            <p>{t("reviewSubtitle")}</p>
           </header>
 
           {cart.length > 0 ? (
             render_checkout_form()
           ) : (
             <div className="momentEmptyCheckout">
-              <h2>Your order is empty.</h2>
-              <p>Return to the menu and choose something for your moment.</p>
+              <h2>{t("emptyOrderTitle")}</h2>
+              <p>{t("emptyOrderBody")}</p>
               <button className="drivePrimary" onClick={return_to_menu} type="button">
-                Browse menu
+                {t("browseMenu")}
               </button>
             </div>
           )}
@@ -619,14 +684,21 @@ export default function DriveThru() {
   return (
     <>
       <AnimatePresence>{showSplash ? <MomentSplash key="moment-splash" /> : null}</AnimatePresence>
-      <main className={`drivePage ${cart.length > 0 ? "hasCheckoutBar" : ""}`}>
+      <main
+        className={`drivePage ${cart.length > 0 ? "hasCheckoutBar" : ""}`}
+        lang={language}
+        dir={direction}
+      >
       <header className="momentMenuHeader" id="moment-menu">
-        <div className="momentMenuEyebrow">
-          <span aria-hidden="true" />
-          Moment Drive-Through
+        <div className="momentCustomerTopline">
+          <div className="momentMenuEyebrow">
+            <span aria-hidden="true" />
+            {t("brand")}
+          </div>
+          <DriveLanguageSwitch />
         </div>
-        <h1>Order from your car.</h1>
-        <p>Choose your favorites and we will prepare everything fresh for easy pickup.</p>
+        <h1>{t("menuTitle")}</h1>
+        <p>{t("menuSubtitle")}</p>
       </header>
 
       <section className="driveShell">
@@ -641,13 +713,22 @@ export default function DriveThru() {
                 type="button"
               >
                 <CategoryIcon kind={category.icon} />
-                {category.label}
+                {t(category.labelKey)}
               </button>
             ))}
           </div>
 
-          {loading ? <div className="driveAlert">Loading menu...</div> : null}
-          {error ? <div className="driveAlert error">{error}</div> : null}
+          {loading ? <div className="driveAlert">{t("loadingMenu")}</div> : null}
+          {error ? (
+            <div className="driveAlert error">
+              <span>{t(error)}</span>
+              {error === "menuLoadFailed" ? (
+                <button onClick={() => setLoadAttempt((attempt) => attempt + 1)} type="button">
+                  {t("retry")}
+                </button>
+              ) : null}
+            </div>
+          ) : null}
 
           <div className="momentCategoryStage" aria-busy={Boolean(transitionCategory)}>
             <CategoryTransitionOverlay
@@ -682,20 +763,20 @@ export default function DriveThru() {
                       <ProductDecoration product={product} />
                       <div className="momentProductCopy">
                         {product.is_active === false ? (
-                          <span className="momentUnavailable">Unavailable</span>
+                          <span className="momentUnavailable">{t("unavailable")}</span>
                         ) : null}
-                        <h2>{product.name}</h2>
-                        <p>{product_detail(product)}</p>
+                        <h2 className="momentProductName" dir="ltr">{product.name}</h2>
+                        <p>{product_detail(product, t, language)}</p>
                       </div>
                       <div className="driveProductBottom">
-                        <strong>{format_omr(product.price_omr)} OMR</strong>
+                        <strong className="momentPrice" dir="ltr">{format_omr(product.price_omr)} OMR</strong>
                         <div className="momentProductActions">
                           <button
                             disabled={product.is_active === false}
                             onClick={() => open_product(product)}
                             type="button"
                           >
-                            Add
+                            {t("add")}
                           </button>
                         </div>
                       </div>
@@ -721,10 +802,10 @@ export default function DriveThru() {
             type="button"
           >
             <span>
-              Checkout
-              <small>{cart_item_count} item{cart_item_count === 1 ? "" : "s"}</small>
+              {t("checkout")}
+              <small>{cart_item_count} {t(cart_item_count === 1 ? "item" : "items")}</small>
             </span>
-            <strong>{format_omr(total)} OMR</strong>
+            <strong className="momentPrice" dir="ltr">{format_omr(total)} OMR</strong>
             <svg viewBox="0 0 24 24" aria-hidden="true">
               <path d="M5 12h13" />
               <path d="m14 7 5 5-5 5" />
@@ -754,28 +835,28 @@ export default function DriveThru() {
               <ProductDecoration product={selectedProduct} detail />
               <button
                 className="momentModalClose"
-                aria-label="Close"
+                aria-label={t("close")}
                 onClick={close_product}
                 type="button"
               >
                 x
               </button>
               {selectedProduct.is_active === false ? (
-                <span className="momentUnavailable">Unavailable</span>
+                <span className="momentUnavailable">{t("unavailable")}</span>
               ) : null}
-              <h2>{selectedProduct.name}</h2>
-              <p>{product_detail(selectedProduct)}</p>
+              <h2 className="momentProductName" dir="ltr">{selectedProduct.name}</h2>
+              <p>{product_detail(selectedProduct, t, language)}</p>
 
               <div className="momentSheetOrder">
                 <div className="momentSheetPrice">
-                  <span>Price</span>
-                  <strong>{format_omr(selectedProduct.price_omr)} OMR</strong>
+                  <span>{t("price")}</span>
+                  <strong className="momentPrice" dir="ltr">{format_omr(selectedProduct.price_omr)} OMR</strong>
                 </div>
-                <div className="momentSheetQuantity" aria-label="Quantity">
-                  <span>Quantity</span>
+                <div className="momentSheetQuantity" aria-label={t("quantity")}>
+                  <span>{t("quantity")}</span>
                   <div className="driveStepper">
                     <button
-                      aria-label="Decrease quantity"
+                      aria-label={t("decreaseQuantity")}
                       onClick={() => setDetailQuantity((value) => Math.max(1, value - 1))}
                       type="button"
                     >
@@ -783,7 +864,7 @@ export default function DriveThru() {
                     </button>
                     <b>{detailQuantity}</b>
                     <button
-                      aria-label="Increase quantity"
+                      aria-label={t("increaseQuantity")}
                       onClick={() => setDetailQuantity((value) => value + 1)}
                       type="button"
                     >
@@ -794,7 +875,7 @@ export default function DriveThru() {
               </div>
 
               <div className="momentSheetFooter">
-                <strong>{format_omr(Number(selectedProduct.price_omr) * detailQuantity)} OMR</strong>
+                <strong className="momentPrice" dir="ltr">{format_omr(Number(selectedProduct.price_omr) * detailQuantity)} OMR</strong>
                 <button
                   className="drivePrimary"
                   disabled={selectedProduct.is_active === false}
@@ -804,7 +885,7 @@ export default function DriveThru() {
                   }}
                   type="button"
                 >
-                  Add {detailQuantity} to order
+                  {t("addToOrder", { count: detailQuantity })}
                 </button>
               </div>
             </Motion.section>
@@ -839,6 +920,7 @@ function CategoryIcon({ kind }) {
 }
 
 function ProductDecoration({ product, detail = false }) {
+  const { t } = useDriveThroughLanguage();
   const kind = get_visual_kind(product);
 
   return (
@@ -873,7 +955,7 @@ function ProductDecoration({ product, detail = false }) {
         <span className="momentLabelSticker">Moment</span>
       ) : null}
       {product.is_best_seller || product.best_seller ? (
-        <span className="momentLoveSticker">Brewed with love</span>
+        <span className="momentLoveSticker">{t("brewedWithLove")}</span>
       ) : null}
     </div>
   );
@@ -891,16 +973,16 @@ function get_visual_kind(product) {
   return "coffee";
 }
 
-function StatusProgress({ status }) {
+function StatusProgress({ status, t }) {
   const steps = [
-    { id: "pending", label: "Sent" },
-    { id: "working", label: "Preparing" },
-    { id: "ready", label: "Ready" },
+    { id: "pending", label: t("sent") },
+    { id: "working", label: t("preparing") },
+    { id: "ready", label: t("ready") },
   ];
   const currentIndex = status_progress_index(status);
 
   return (
-    <div className="driveStatusProgress" aria-label="Order progress">
+    <div className="driveStatusProgress" aria-label={t("orderProgress")}>
       {steps.map((step, index) => {
         const state =
           index < currentIndex ? "complete" : index === currentIndex ? "active" : "waiting";
@@ -922,44 +1004,51 @@ function status_progress_index(status) {
   return 0;
 }
 
-function status_pill(status) {
-  if (status === "pending") return "Sent to cashier";
-  if (status === "working") return "Being prepared";
-  if (status === "ready") return "Prepared";
-  if (status === "delivered") return "Completed";
-  if (status === "not_delivered") return "Not completed";
-  return "Live status";
+function status_pill(status, t) {
+  if (status === "pending") return t("sent");
+  if (status === "working") return t("preparing");
+  if (status === "ready") return t("ready");
+  if (status === "delivered") return t("delivered");
+  if (status === "not_delivered") return t("notDelivered");
+  return t("orderProgress");
 }
 
-function status_title(status) {
-  if (status === "pending") return "Order sent";
-  if (status === "working") return "Being prepared";
-  if (status === "ready") return "Prepared";
-  if (status === "delivered") return "Delivered";
-  if (status === "not_delivered") return "Not delivered";
-  return "Order status";
+function status_title(status, t) {
+  if (status === "pending") return t("statusPendingTitle");
+  if (status === "working") return t("statusWorkingTitle");
+  if (status === "ready") return t("statusReadyTitle");
+  if (status === "delivered") return t("statusDeliveredTitle");
+  if (status === "not_delivered") return t("statusNotDeliveredTitle");
+  return t("orderProgress");
 }
 
-function status_body(status) {
-  if (status === "pending") return "Please wait while the cashier accepts your order.";
-  if (status === "working") return "Your order is being prepared and will be delivered to your car.";
-  if (status === "ready") return "Your order is prepared. A cashier will bring it to your car.";
-  if (status === "delivered") return "Thank you. Enjoy your order.";
-  if (status === "not_delivered") return "This order was not completed. Please check with the cashier or start a new order.";
-  return "We will keep this page updated.";
+function status_body(status, t) {
+  if (status === "pending") return t("statusPendingBody");
+  if (status === "working") return t("statusWorkingBody");
+  if (status === "ready") return t("statusReadyBody");
+  if (status === "delivered") return t("statusDeliveredBody");
+  if (status === "not_delivered") return t("statusNotDeliveredBody");
+  return t("statusFallbackBody");
 }
 
 function format_omr(n) {
   return Number(n || 0).toFixed(3);
 }
 
-function product_detail(product) {
-  if (product?.description) return product.description;
+function payment_label(payment_method, t) {
+  return payment_method === "Cash" ? t("cash") : t("visa");
+}
+
+function product_detail(product, t, language) {
+  const description = String(product?.description || "").trim();
+  if (description && (language !== "ar" || /[\u0600-\u06FF]/.test(description))) {
+    return description;
+  }
 
   const kind = get_visual_kind(product);
-  if (kind === "tea") return "A balanced tea blend, steeped fresh for a calm, aromatic finish.";
-  if (kind === "citrus") return "Bright, refreshing, and prepared for an easy sip on the go.";
-  if (kind === "ice") return "Chilled, smooth, and served over clear ice in the Moment style.";
-  if (kind === "sticker") return "A fresh cafe favorite selected to pair beautifully with your drink.";
-  return "Freshly brewed with a rich aroma and a smooth, comforting finish.";
+  if (kind === "tea") return t("detailTea");
+  if (kind === "citrus") return t("detailCitrus");
+  if (kind === "ice") return t("detailIce");
+  if (kind === "sticker") return t("detailSnack");
+  return t("detailCoffee");
 }
