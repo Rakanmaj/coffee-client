@@ -244,7 +244,7 @@ function DriveThruContent() {
     }
 
     connect_socket();
-    const poll = window.setInterval(refresh_order, 3500);
+    const poll = window.setInterval(refresh_order, 2000);
     window.addEventListener("focus", refresh_order);
     document.addEventListener("visibilitychange", refresh_when_visible);
 
