@@ -6,7 +6,8 @@
 .driveAdminOrderTop,
 .driveAdminMeta,
 .driveAdminItem,
-.driveAdminActions {
+.driveAdminActions,
+.driveAdminHeaderActions {
   display: flex;
   gap: 12px;
 }
@@ -16,6 +17,12 @@
 .driveAdminItem {
   align-items: flex-start;
   justify-content: space-between;
+}
+
+.driveAdminHeaderActions {
+  align-items: center;
+  justify-content: flex-end;
+  flex-wrap: wrap;
 }
 
 .driveQrPanel {
@@ -195,8 +202,14 @@
 @media (max-width: 620px) {
   .driveAdminHeader,
   .driveAdminOrderTop,
-  .driveAdminActions {
+  .driveAdminActions,
+  .driveAdminHeaderActions {
     flex-direction: column;
+  }
+
+  .driveAdminHeaderActions {
+    align-items: stretch;
+    width: 100%;
   }
 
   .driveAdminMeta {

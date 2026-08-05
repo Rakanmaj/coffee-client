@@ -17,6 +17,8 @@ export default function DriveThroughOrders() {
     loading,
     savingId,
     error,
+    audioReady,
+    enableAudio,
     fetchOrders,
     updateOrder,
   } = useDriveThrough();
@@ -65,9 +67,16 @@ export default function DriveThroughOrders() {
           <div className="subTitle">Live car orders from the public QR menu.</div>
         </div>
 
-        <button className="btn btnGhost" onClick={fetchOrders} disabled={loading} type="button">
-          Refresh
-        </button>
+        <div className="driveAdminHeaderActions">
+          {!audioReady ? (
+            <button className="btn btnPrimary" onClick={enableAudio} type="button">
+              Enable sound
+            </button>
+          ) : null}
+          <button className="btn btnGhost" onClick={fetchOrders} disabled={loading} type="button">
+            Refresh
+          </button>
+        </div>
       </div>
 
       {error ? <div className="alert alertError">{error}</div> : null}

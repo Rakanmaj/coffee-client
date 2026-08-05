@@ -1,7 +1,12 @@
 import React, { createContext, useContext, useEffect, useMemo, useState } from "react";
 import api from "../api/api";
 import { useApp } from "./AppContext";
-import { startCashierLoop, stopCashierLoop, unlockAudio } from "../utils/sounds";
+import {
+  playCashierAlert,
+  startCashierLoop,
+  stopCashierLoop,
+  unlockAudio,
+} from "../utils/sounds";
 
 const DriveThroughContext = createContext(null);
 
@@ -119,7 +124,7 @@ export function DriveThroughProvider({ children, enabled }) {
     const refresh_when_visible = () => {
       if (document.visibilityState !== "hidden") refresh_silently();
     };
-    const poll = window.setInterval(refresh_silently, 3500);
+    const poll = window.setInterval(refresh_silently, 2000);
     window.addEventListener("focus", refresh_silently);
     document.addEventListener("visibilitychange", refresh_when_visible);
 
@@ -178,6 +183,13 @@ export function DriveThroughProvider({ children, enabled }) {
     };
   }, [enabled, user?.user_id, pendingCount, audioReady]);
 
+  async function enableAudio() {
+    const ok = await unlockAudio();
+    setAudioReady(ok);
+    if (ok) playCashierAlert();
+    return ok;
+  }
+
   const value = {
     orders,
     pendingCount,
@@ -185,6 +197,7 @@ export function DriveThroughProvider({ children, enabled }) {
     savingId,
     error,
     audioReady,
+    enableAudio,
     fetchOrders,
     updateOrder,
   };
@@ -207,6 +220,7 @@ export function useDriveThrough() {
       savingId: "",
       error: "",
       audioReady: false,
+      enableAudio: async () => false,
       fetchOrders: () => {},
       updateOrder: async () => ({ ok: false }),
     };
