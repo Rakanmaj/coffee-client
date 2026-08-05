@@ -1,4 +1,5 @@
 let audio_context = null;
+let audio_primed = false;
 let cashier_loop = null;
 let last_customer_tone_at = 0;
 
@@ -30,7 +31,33 @@ export async function unlockAudio() {
     }
   }
 
+  if (ctx.state === "running") {
+    prime_output(ctx);
+  }
+
   return ctx.state === "running";
+}
+
+function prime_output(ctx) {
+  if (audio_primed) return;
+
+  try {
+    const osc = ctx.createOscillator();
+    const gain = ctx.createGain();
+    const start = ctx.currentTime;
+    const end = start + 0.03;
+
+    gain.gain.setValueAtTime(0.0001, start);
+    gain.gain.exponentialRampToValueAtTime(0.00001, end);
+    osc.frequency.setValueAtTime(440, start);
+    osc.connect(gain);
+    gain.connect(ctx.destination);
+    osc.start(start);
+    osc.stop(end);
+    audio_primed = true;
+  } catch {
+    audio_primed = false;
+  }
 }
 
 function tone(freq, duration_ms, delay_ms = 0, volume = 0.08) {
