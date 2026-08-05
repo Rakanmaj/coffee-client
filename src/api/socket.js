@@ -6,7 +6,13 @@ let socket;
 export function getSocket() {
   if (!socket) {
     socket = io(API_BASE_URL, {
-      transports: ["websocket", "polling"],
+      transports: ["polling", "websocket"],
+      upgrade: true,
+      reconnection: true,
+      reconnectionAttempts: Infinity,
+      reconnectionDelay: 500,
+      reconnectionDelayMax: 4000,
+      timeout: 10000,
     });
   }
 

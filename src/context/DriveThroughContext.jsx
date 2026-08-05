@@ -18,19 +18,23 @@ export function DriveThroughProvider({ children, enabled }) {
     [orders]
   );
 
-  async function fetchOrders() {
+  async function fetchOrders({ silent = false } = {}) {
     if (!enabled || !user?.user_id) return;
 
-    setLoading(true);
-    setError("");
+    if (!silent) {
+      setLoading(true);
+      setError("");
+    }
 
     try {
       const res = await api.get("/api/drive-through/orders");
       setOrders(res.data.orders || []);
     } catch (err) {
-      setError(err.response?.data?.message || err.message || "Failed to load drive-through orders");
+      if (!silent) {
+        setError(err.response?.data?.message || err.message || "Failed to load drive-through orders");
+      }
     } finally {
-      setLoading(false);
+      if (!silent) setLoading(false);
     }
   }
 
@@ -80,6 +84,7 @@ export function DriveThroughProvider({ children, enabled }) {
 
     let socket;
     let cancelled = false;
+    let join_cashiers = () => {};
 
     const handle_orders = ({ orders: next_orders }) => {
       setOrders(next_orders || []);
@@ -102,16 +107,32 @@ export function DriveThroughProvider({ children, enabled }) {
       if (cancelled) return;
 
       socket = getSocket();
-      socket.emit("cashier:join", { token: localStorage.getItem("authToken") });
+      join_cashiers = () => socket.emit("cashier:join", { token: localStorage.getItem("authToken") });
+      join_cashiers();
+      socket.on("connect", join_cashiers);
+      socket.on("connect_error", refresh_silently);
       socket.on("orders-changed", handle_orders);
       socket.on("new-order", handle_new_order);
     }
+
+    const refresh_silently = () => fetchOrders({ silent: true });
+    const refresh_when_visible = () => {
+      if (document.visibilityState !== "hidden") refresh_silently();
+    };
+    const poll = window.setInterval(refresh_silently, 3500);
+    window.addEventListener("focus", refresh_silently);
+    document.addEventListener("visibilitychange", refresh_when_visible);
 
     connect_socket();
 
     return () => {
       cancelled = true;
+      window.clearInterval(poll);
+      window.removeEventListener("focus", refresh_silently);
+      document.removeEventListener("visibilitychange", refresh_when_visible);
       socket?.emit("cashier:leave");
+      socket?.off("connect", join_cashiers);
+      socket?.off("connect_error", refresh_silently);
       socket?.off("orders-changed", handle_orders);
       socket?.off("new-order", handle_new_order);
     };
@@ -121,23 +142,25 @@ export function DriveThroughProvider({ children, enabled }) {
   useEffect(() => {
     if (!enabled || !user?.user_id) return;
 
-    let done = false;
+    let audio_unlocked = false;
     const prime_audio = async () => {
-      if (done) return;
-      done = true;
+      if (audio_unlocked) return;
       const ok = await unlockAudio();
+      audio_unlocked = ok;
       setAudioReady(ok);
     };
 
     const options = { capture: true, passive: true };
     window.addEventListener("pointerdown", prime_audio, options);
     window.addEventListener("touchstart", prime_audio, options);
+    window.addEventListener("touchend", prime_audio, options);
     window.addEventListener("keydown", prime_audio, options);
     window.addEventListener("click", prime_audio, options);
 
     return () => {
       window.removeEventListener("pointerdown", prime_audio, options);
       window.removeEventListener("touchstart", prime_audio, options);
+      window.removeEventListener("touchend", prime_audio, options);
       window.removeEventListener("keydown", prime_audio, options);
       window.removeEventListener("click", prime_audio, options);
     };

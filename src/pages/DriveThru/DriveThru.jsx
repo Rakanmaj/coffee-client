@@ -162,24 +162,69 @@ function DriveThruContent() {
   }, []);
 
   useEffect(() => {
+    let audio_unlocked = false;
+
+    const prime_audio = async () => {
+      if (audio_unlocked) return;
+      audio_unlocked = await unlockAudio();
+    };
+
+    const options = { capture: true, passive: true };
+    window.addEventListener("pointerdown", prime_audio, options);
+    window.addEventListener("touchstart", prime_audio, options);
+    window.addEventListener("touchend", prime_audio, options);
+    window.addEventListener("keydown", prime_audio, options);
+    window.addEventListener("click", prime_audio, options);
+
+    return () => {
+      window.removeEventListener("pointerdown", prime_audio, options);
+      window.removeEventListener("touchstart", prime_audio, options);
+      window.removeEventListener("touchend", prime_audio, options);
+      window.removeEventListener("keydown", prime_audio, options);
+      window.removeEventListener("click", prime_audio, options);
+    };
+  }, []);
+
+  useEffect(() => {
     if (!order?.id) return;
 
     let socket;
     let cancelled = false;
+    let last_status = order.status;
+    let join_room = () => {};
 
     const update = ({ order: next_order }) => {
       if (!next_order) return;
       setOrder((prev) => {
-        if (prev?.status === "pending" && next_order.status === "working") {
+        const previous_status = prev?.status || last_status;
+
+        if (previous_status === "pending" && next_order.status === "working") {
           playCustomerTone();
         }
 
-        if (prev?.status !== "ready" && next_order.status === "ready") {
+        if (previous_status !== "ready" && next_order.status === "ready") {
           playReadyTone();
         }
 
+        last_status = next_order.status;
         return next_order;
       });
+    };
+
+    const refresh_order = async () => {
+      try {
+        const res = await api.get(`/api/drive-through/orders/${order.id}`);
+        if (!cancelled) update({ order: res.data.order });
+      } catch (err) {
+        if (err.response?.status === 404 && !["delivered", "not_delivered"].includes(last_status)) {
+          localStorage.removeItem("driveThroughOrderId");
+          if (!cancelled) setOrder(null);
+        }
+      }
+    };
+
+    const refresh_when_visible = () => {
+      if (document.visibilityState !== "hidden") refresh_order();
     };
 
     async function connect_socket() {
@@ -187,7 +232,10 @@ function DriveThruContent() {
       if (cancelled) return;
 
       socket = getSocket();
-      socket.emit("drive-through:join", { orderId: order.id });
+      join_room = () => socket.emit("drive-through:join", { orderId: order.id });
+      join_room();
+      socket.on("connect", join_room);
+      socket.on("connect_error", refresh_order);
       socket.on("order-updated", update);
       socket.on("order-accepted", update);
       socket.on("order-ready", update);
@@ -196,16 +244,24 @@ function DriveThruContent() {
     }
 
     connect_socket();
+    const poll = window.setInterval(refresh_order, 3500);
+    window.addEventListener("focus", refresh_order);
+    document.addEventListener("visibilitychange", refresh_when_visible);
 
     return () => {
       cancelled = true;
+      window.clearInterval(poll);
+      window.removeEventListener("focus", refresh_order);
+      document.removeEventListener("visibilitychange", refresh_when_visible);
+      socket?.off("connect", join_room);
+      socket?.off("connect_error", refresh_order);
       socket?.off("order-updated", update);
       socket?.off("order-accepted", update);
       socket?.off("order-ready", update);
       socket?.off("order-delivered", update);
       socket?.off("order-not-delivered", update);
     };
-  }, [order?.id]);
+  }, [order?.id, order?.status]);
 
   async function restore_order() {
     const existing_id = localStorage.getItem("driveThroughOrderId");
