@@ -1,0 +1,2227 @@
+.momentLanding {
+  --paper: #f7f1e8;
+  --paper-deep: #eadcc8;
+  --ink: #07111f;
+  --soft-ink: rgba(7, 17, 31, 0.68);
+  --peach: #f28a62;
+  --coffee: #6b432b;
+  --cream-line: rgba(107, 67, 43, 0.18);
+  min-height: 100vh;
+  overflow-x: clip;
+  background:
+    radial-gradient(circle at 12% 8%, rgba(255, 247, 237, 0.3), transparent 28%),
+    linear-gradient(180deg, #fff7ed 0%, var(--paper) 28%, #efe0cc 64%, #150f0c 100%);
+  color: var(--ink);
+  font-family: Manrope, "IBM Plex Sans Arabic", system-ui, sans-serif;
+}
+
+.momentLanding * {
+  box-sizing: border-box;
+}
+
+.momentLanding img {
+  display: block;
+  width: 100%;
+}
+
+.momentLanding a {
+  color: inherit;
+}
+
+.momentNav {
+  position: fixed;
+  top: 18px;
+  left: 50%;
+  z-index: 60;
+  width: min(1160px, calc(100% - 28px));
+  min-height: 62px;
+  transform: translateX(-50%);
+  display: grid;
+  grid-template-columns: auto 1fr auto;
+  align-items: center;
+  gap: 20px;
+  padding: 10px 12px 10px 16px;
+  border: 1px solid rgba(255, 247, 237, 0.34);
+  border-radius: 999px;
+  background: rgba(19, 13, 10, 0.32);
+  color: #fff7ed;
+  box-shadow: 0 18px 60px rgba(18, 10, 6, 0.18);
+  backdrop-filter: blur(18px);
+  -webkit-backdrop-filter: blur(18px);
+}
+
+.momentNavLogo,
+.momentNav nav,
+.momentNavActions,
+.momentFooter {
+  display: flex;
+  align-items: center;
+}
+
+.momentNavLogo {
+  gap: 10px;
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.momentNavLogo img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  background: rgba(255, 247, 237, 0.92);
+  object-fit: cover;
+}
+
+.momentNav nav {
+  justify-content: center;
+  gap: clamp(10px, 2vw, 28px);
+}
+
+.momentNav nav a,
+.momentNavCta,
+.momentLanguageToggle,
+.momentButton {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-height: 44px;
+  border-radius: 999px;
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+}
+
+.momentNavActions {
+  justify-content: flex-end;
+  gap: 8px;
+}
+
+.momentNav nav a {
+  color: rgba(255, 247, 237, 0.78);
+}
+
+.momentNav nav a::after {
+  position: absolute;
+  left: 0;
+  bottom: 7px;
+  width: 100%;
+  height: 1px;
+  transform: scaleX(0);
+  transform-origin: right;
+  background: currentColor;
+  content: "";
+  transition: transform 180ms ease;
+}
+
+.momentNav nav a:hover::after {
+  transform: scaleX(1);
+  transform-origin: left;
+}
+
+.momentNavCta,
+.momentLanguageToggle,
+.momentButton {
+  padding: 0 18px;
+  border: 1px solid rgba(255, 247, 237, 0.68);
+  background: rgba(255, 247, 237, 0.94);
+  color: #21140f;
+  transition: transform 180ms ease, background 180ms ease, color 180ms ease;
+}
+
+.momentNav .momentNavCta {
+  border-color: rgba(7, 17, 31, 0.16);
+  background: #fff7ed;
+  color: var(--ink);
+  -webkit-text-fill-color: var(--ink);
+  box-shadow: inset 0 0 0 1px rgba(255, 247, 237, 0.34);
+  text-shadow: none;
+}
+
+.momentLanguageToggle {
+  background: rgba(255, 247, 237, 0.08);
+  color: #fff7ed;
+  cursor: pointer;
+  font-family: inherit;
+}
+
+.momentLanguageToggle:hover {
+  background: rgba(255, 247, 237, 0.16);
+}
+
+.momentButton {
+  width: fit-content;
+  border-color: rgba(7, 17, 31, 0.18);
+  background: var(--ink);
+  color: #fff7ed;
+}
+
+.momentButton.dark {
+  background: #fff7ed;
+  color: var(--ink);
+}
+
+.momentNavCta:hover,
+.momentLanguageToggle:hover,
+.momentButton:hover {
+  transform: translateY(-2px);
+}
+
+.momentHero {
+  position: relative;
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  isolation: isolate;
+  overflow: hidden;
+  color: #fff7ed;
+}
+
+.momentHero,
+.momentStatement,
+.momentStory,
+.momentSignature,
+.momentOrderFilm,
+.momentCampaign,
+.momentMenuPreview,
+.momentBusiness,
+.momentLocation,
+.momentClosing {
+  scroll-margin-top: 96px;
+}
+
+.momentHeroImageWrap,
+.momentHeroOverlay {
+  position: absolute;
+  inset: 0;
+}
+
+.momentHeroImageWrap {
+  z-index: -3;
+  background: #241711;
+}
+
+.momentHeroImage {
+  height: 100%;
+  object-fit: cover;
+  object-position: center 46%;
+  filter: saturate(0.98) contrast(1.02);
+  transform-origin: center;
+}
+
+.momentHeroOverlay {
+  z-index: -2;
+  background:
+    linear-gradient(90deg, rgba(15, 10, 8, 0.86), rgba(15, 10, 8, 0.3) 44%, rgba(15, 10, 8, 0.1)),
+    linear-gradient(180deg, rgba(15, 10, 8, 0.18), rgba(15, 10, 8, 0.7));
+}
+
+.momentHeroContent {
+  width: min(1160px, calc(100% - 30px));
+  padding-top: 70px;
+}
+
+.momentKicker,
+.momentFine {
+  margin: 0 0 18px;
+  color: var(--coffee);
+  font-size: clamp(0.78rem, 1.4vw, 0.96rem);
+  font-weight: 900;
+  letter-spacing: 0.22em;
+  text-transform: uppercase;
+}
+
+.momentKicker {
+  color: #fff7ed;
+}
+
+.momentHeroTitle {
+  display: flex;
+  flex-wrap: wrap;
+  overflow: hidden;
+  margin: 0;
+  font-size: clamp(5.2rem, 18vw, 16.5rem);
+  line-height: 0.78;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.momentHeroTitle span {
+  display: inline-block;
+}
+
+.momentHeroLine {
+  max-width: 560px;
+  margin: 24px 0 0;
+  font-size: clamp(1.3rem, 3vw, 3rem);
+  line-height: 1.05;
+  color: rgba(255, 247, 237, 0.86);
+}
+
+.momentScrollHint {
+  position: absolute;
+  right: clamp(18px, 4vw, 54px);
+  bottom: 28px;
+  display: grid;
+  place-items: center;
+  width: 74px;
+  aspect-ratio: 1;
+  border: 1px solid rgba(255, 247, 237, 0.4);
+  border-radius: 50%;
+  color: rgba(255, 247, 237, 0.82);
+  font-size: 11px;
+  font-weight: 800;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.momentStatement {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  padding: 12vh 18px;
+  background: var(--paper);
+}
+
+.momentStatement h2,
+.momentClosing h2 {
+  width: min(1150px, 100%);
+  margin: 0;
+  font-size: clamp(3.6rem, 11vw, 11rem);
+  line-height: 0.86;
+  letter-spacing: 0;
+  text-transform: uppercase;
+}
+
+.momentStatementLine,
+.momentClosing h2 span {
+  display: block;
+}
+
+.momentSignature .peach {
+  color: var(--peach);
+}
+
+.momentStory,
+.momentSignature,
+.momentMenuPreview,
+.momentBusiness,
+.momentLocation {
+  width: min(1180px, calc(100% - 30px));
+  margin: 0 auto;
+}
+
+.momentStory {
+  min-height: 100svh;
+  display: grid;
+  grid-template-columns: 0.92fr 1fr;
+  align-items: center;
+  gap: clamp(28px, 6vw, 88px);
+  padding: 12vh 0;
+}
+
+.momentStoryMedia {
+  overflow: hidden;
+  border-radius: 32px 32px 8px 32px;
+  box-shadow: 0 34px 90px rgba(77, 43, 25, 0.18);
+}
+
+.momentStoryMedia img {
+  aspect-ratio: 4 / 5;
+  height: 100%;
+  object-fit: cover;
+}
+
+.momentStoryCopy h2,
+.momentSignatureCopy h2,
+.momentMenuHeader h2,
+.momentBusiness h2,
+.momentLocation h2 {
+  margin: 0 0 22px;
+  color: var(--ink);
+  font-size: clamp(2.4rem, 6.8vw, 6.5rem);
+  line-height: 0.92;
+  letter-spacing: 0;
+}
+
+.momentStoryCopy p,
+.momentSignatureCopy p,
+.momentMenuHeader p,
+.momentBusiness p,
+.momentLocation p {
+  max-width: 660px;
+  margin: 0 0 16px;
+  color: var(--soft-ink);
+  font-size: clamp(1rem, 1.6vw, 1.22rem);
+  line-height: 1.7;
+}
+
+.momentSignature {
+  position: relative;
+  display: grid;
+  grid-template-columns: minmax(0, 1fr) minmax(280px, 420px);
+  align-items: end;
+  min-height: 118svh;
+  gap: 28px;
+  padding: 12vh 0;
+}
+
+.momentSignatureWord {
+  position: absolute;
+  top: 8vh;
+  left: 50%;
+  z-index: 0;
+  transform: translateX(-50%);
+  color: rgba(107, 67, 43, 0.08);
+  font-size: clamp(5.8rem, 17vw, 16rem);
+  font-weight: 900;
+  line-height: 0.85;
+  letter-spacing: 0;
+  pointer-events: none;
+}
+
+.momentSignatureImageShell {
+  position: relative;
+  z-index: 1;
+  overflow: hidden;
+  border-radius: 10px 80px 10px 10px;
+  box-shadow: 0 40px 110px rgba(52, 30, 19, 0.22);
+}
+
+.momentSignatureImage {
+  min-height: 62vh;
+  object-fit: cover;
+  object-position: center;
+}
+
+.momentSignatureShine {
+  display: none;
+}
+
+.momentSignatureCopy {
+  position: relative;
+  z-index: 2;
+  padding: 34px 0 7vh;
+}
+
+.momentOrderFilm {
+  position: relative;
+  min-height: auto;
+  overflow: clip;
+  background: #07111f;
+  color: #fff7ed;
+}
+
+.momentOrderIntro {
+  width: min(1180px, calc(100% - 30px));
+  min-height: 56svh;
+  margin: 0 auto;
+  display: grid;
+  align-content: end;
+  padding: 18vh 0 9vh;
+}
+
+.momentOrderIntro h2 {
+  max-width: 920px;
+  margin: 0;
+  color: #fff7ed;
+  font-size: clamp(2.6rem, 7vw, 7rem);
+  line-height: 0.95;
+}
+
+.momentOrderIntro .momentFine {
+  color: var(--peach);
+}
+
+.momentOrderIntro > p:last-child {
+  max-width: 620px;
+  margin: 22px 0 0;
+  color: rgba(255, 247, 237, 0.68);
+  font-size: clamp(1.05rem, 1.8vw, 1.35rem);
+  line-height: 1.55;
+}
+
+.momentOrderPinned {
+  position: relative;
+  min-height: 100svh;
+  overflow: hidden;
+  background:
+    radial-gradient(circle at 20% 18%, rgba(191, 220, 232, 0.18), transparent 30%),
+    radial-gradient(circle at 80% 82%, rgba(242, 138, 98, 0.18), transparent 35%),
+    linear-gradient(180deg, rgba(7, 17, 31, 0.92), #07111f 46%, #120d0b);
+  isolation: isolate;
+}
+
+.momentOrderBackdropWarm {
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  opacity: 0;
+  background:
+    radial-gradient(circle at 70% 72%, rgba(242, 138, 98, 0.24), transparent 34%),
+    linear-gradient(135deg, rgba(255, 247, 237, 0.04), transparent 50%);
+}
+
+.momentOrderInner {
+  width: min(1180px, calc(100% - 30px));
+  min-height: 100svh;
+  margin: 0 auto;
+  padding: 84px 0 22px;
+  display: grid;
+  grid-template-rows: auto auto 1fr;
+  gap: clamp(12px, 2vh, 20px);
+}
+
+.momentOrderEyebrow {
+  color: rgba(255, 247, 237, 0.62);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.2em;
+  text-transform: uppercase;
+}
+
+.momentOrderProgress {
+  display: grid;
+  grid-template-columns: auto minmax(80px, 1fr) auto minmax(80px, 1fr) auto;
+  align-items: center;
+  gap: 12px;
+  width: min(620px, 100%);
+}
+
+.momentProgressStep {
+  position: relative;
+  width: 48px;
+  aspect-ratio: 1;
+  display: grid;
+  place-items: center;
+  color: #fff7ed;
+  font-size: 12px;
+  font-weight: 900;
+}
+
+.momentProgressStep svg {
+  position: absolute;
+  inset: 0;
+  transform: rotate(-90deg);
+}
+
+.momentProgressTrack,
+.momentProgressCircle {
+  fill: none;
+  stroke-width: 2.5;
+}
+
+.momentProgressTrack {
+  stroke: rgba(255, 247, 237, 0.18);
+}
+
+.momentProgressCircle {
+  stroke: var(--peach);
+  stroke-linecap: round;
+  stroke-dasharray: 1;
+  stroke-dashoffset: 1;
+}
+
+.momentProgressCheck {
+  position: absolute;
+  color: var(--peach);
+  font-size: 18px;
+}
+
+.momentProgressLine {
+  position: relative;
+  height: 2px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: rgba(255, 247, 237, 0.14);
+}
+
+.momentProgressLineFill {
+  position: absolute;
+  inset: 0;
+  display: block;
+  border-radius: inherit;
+  background: linear-gradient(90deg, var(--peach), #fff7ed);
+}
+
+.momentOrderStage {
+  position: relative;
+  min-height: clamp(390px, calc(100svh - 248px), 540px);
+  display: grid;
+  grid-template-columns: minmax(280px, 0.72fr) minmax(360px, 1fr);
+  align-items: center;
+  gap: clamp(18px, 5vw, 64px);
+  overflow: hidden;
+  border: 1px solid rgba(255, 247, 237, 0.14);
+  border-radius: 42px;
+  padding: clamp(22px, 5vw, 58px);
+  background:
+    linear-gradient(115deg, rgba(255, 247, 237, 0.08), rgba(255, 247, 237, 0.02)),
+    rgba(255, 247, 237, 0.035);
+  box-shadow: 0 38px 120px rgba(0, 0, 0, 0.28);
+}
+
+.momentCarFrame {
+  position: absolute;
+  inset: 0;
+  pointer-events: none;
+}
+
+.momentCarWindow {
+  position: absolute;
+  inset: 7% 5% auto;
+  height: 38%;
+  border: 1px solid rgba(191, 220, 232, 0.16);
+  border-bottom: 0;
+  border-radius: 44px 44px 0 0;
+}
+
+.momentDashboard {
+  position: absolute;
+  left: -6%;
+  right: -6%;
+  bottom: -10%;
+  height: 28%;
+  border-radius: 50% 50% 0 0;
+  background: linear-gradient(180deg, rgba(255, 247, 237, 0.08), rgba(7, 17, 31, 0.4));
+}
+
+.momentOrderTextStack,
+.momentSceneVisual,
+.momentOrderFinalPanel {
+  position: relative;
+  z-index: 2;
+}
+
+.momentOrderTextStack {
+  min-height: 210px;
+}
+
+.momentOrderTextPanel {
+  position: absolute;
+  inset: 0 auto auto 0;
+  max-width: 500px;
+}
+
+.momentOrderTextPanel h2 {
+  margin: 0;
+  color: #fff7ed;
+  font-size: clamp(4rem, 9vw, 8.6rem);
+  line-height: 0.78;
+}
+
+.momentOrderTextPanel p {
+  max-width: 430px;
+  margin: 18px 0 0;
+  color: rgba(255, 247, 237, 0.72);
+  font-size: clamp(1.2rem, 2.4vw, 2.1rem);
+  line-height: 1.1;
+}
+
+.momentSceneVisual {
+  min-height: min(440px, calc(100svh - 290px));
+}
+
+.momentQrStand,
+.momentPhone,
+.momentOrderTray,
+.momentSipScene {
+  position: absolute;
+}
+
+.momentQrStand {
+  left: 9%;
+  bottom: 15%;
+  width: min(158px, 22vw);
+}
+
+.momentQrPlate {
+  position: relative;
+  display: grid;
+  gap: 10px;
+  padding: 16px;
+  border: 1px solid rgba(255, 247, 237, 0.26);
+  border-radius: 24px;
+  background: rgba(255, 247, 237, 0.94);
+  color: var(--ink);
+  box-shadow: 0 24px 60px rgba(0, 0, 0, 0.28);
+}
+
+.momentQrPlate > span {
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+}
+
+.momentQrCode {
+  display: grid;
+  grid-template-columns: repeat(6, 1fr);
+  gap: 4px;
+  aspect-ratio: 1;
+  padding: 8px;
+  border-radius: 12px;
+  background: #fff;
+}
+
+.momentQrCode.real {
+  display: grid;
+  grid-template-columns: 1fr;
+  place-items: center;
+  padding: 10px;
+}
+
+.momentQrImage,
+.momentPhoneQrPreview {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+.momentQrCode i {
+  border-radius: 2px;
+  background: var(--ink);
+}
+
+.momentQrCode i:nth-child(3n) {
+  opacity: 0.16;
+}
+
+.momentScanLine,
+.momentFocusFrame,
+.momentSuccessPill {
+  position: absolute;
+  pointer-events: none;
+}
+
+.momentScanLine {
+  left: 18px;
+  right: 18px;
+  top: 52px;
+  height: 3px;
+  border-radius: 999px;
+  background: var(--peach);
+  box-shadow: 0 0 18px rgba(242, 138, 98, 0.8);
+}
+
+.momentFocusFrame {
+  inset: 48px 14px 16px;
+  border: 2px solid var(--peach);
+  border-radius: 18px;
+  box-shadow: 0 0 28px rgba(242, 138, 98, 0.22);
+}
+
+.momentSuccessPill {
+  right: 12px;
+  bottom: 10px;
+  padding: 5px 9px;
+  border-radius: 999px;
+  background: var(--ink);
+  color: #fff7ed;
+  font-size: 10px;
+  font-weight: 900;
+}
+
+.momentQrStem {
+  display: block;
+  width: 14px;
+  height: 64px;
+  margin: 0 auto;
+  background: rgba(255, 247, 237, 0.32);
+}
+
+.momentPhone {
+  right: 12%;
+  bottom: 7%;
+  width: min(238px, 30vw);
+  aspect-ratio: 0.54;
+  border: 10px solid #0a0f18;
+  border-radius: 38px;
+  background: #0a0f18;
+  box-shadow: 0 34px 90px rgba(0, 0, 0, 0.44);
+  overflow: hidden;
+}
+
+.momentPhoneSpeaker {
+  position: absolute;
+  top: 11px;
+  left: 50%;
+  z-index: 5;
+  width: 52px;
+  height: 5px;
+  transform: translateX(-50%);
+  border-radius: 999px;
+  background: rgba(255, 247, 237, 0.28);
+}
+
+.momentPhoneScreen {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  border-radius: 28px;
+  background: #f7f1e8;
+  color: var(--ink);
+}
+
+.momentPhoneScan,
+.momentPhoneMenu {
+  position: absolute;
+  inset: 0;
+  padding: 34px 16px 18px;
+}
+
+.momentPhoneMiniLogo {
+  display: block;
+  margin-bottom: 18px;
+  color: var(--coffee);
+  font-size: 14px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.momentPhoneScanner {
+  position: relative;
+  height: 170px;
+  display: grid;
+  place-items: center;
+  padding: 16px;
+  border-radius: 24px;
+  background: #fff;
+}
+
+.momentPhoneQrPreview {
+  opacity: 0.18;
+  filter: blur(1px);
+}
+
+.momentPhoneScanner span {
+  position: absolute;
+  width: 28px;
+  height: 28px;
+  border-color: var(--peach);
+}
+
+.momentPhoneScanner span:nth-child(1) {
+  left: 14px;
+  top: 14px;
+  border-left: 3px solid;
+  border-top: 3px solid;
+}
+
+.momentPhoneScanner span:nth-child(2) {
+  right: 14px;
+  top: 14px;
+  border-right: 3px solid;
+  border-top: 3px solid;
+}
+
+.momentPhoneScanner span:nth-child(3) {
+  left: 14px;
+  bottom: 14px;
+  border-left: 3px solid;
+  border-bottom: 3px solid;
+}
+
+.momentPhoneScanner span:nth-child(4) {
+  right: 14px;
+  bottom: 14px;
+  border-right: 3px solid;
+  border-bottom: 3px solid;
+}
+
+.momentMenuScroller {
+  display: grid;
+  gap: 10px;
+}
+
+.momentProductCard {
+  display: grid;
+  grid-template-columns: 46px 1fr;
+  align-items: center;
+  gap: 10px;
+  padding: 10px;
+  border: 1px solid rgba(107, 67, 43, 0.14);
+  border-radius: 18px;
+  background: rgba(255, 255, 255, 0.74);
+  box-shadow: 0 14px 30px rgba(107, 67, 43, 0.08);
+}
+
+.momentProductCard.isFeatured {
+  border-color: rgba(242, 138, 98, 0.5);
+  background: #fff7ed;
+}
+
+.momentProductCup {
+  display: grid;
+  place-items: center;
+  height: 52px;
+  border-radius: 14px;
+  background: rgba(242, 138, 98, 0.12);
+}
+
+.momentProductCup span,
+.momentSelectedDrinkMini span {
+  width: 22px;
+  height: 34px;
+  border: 2px solid var(--ink);
+  border-top-width: 5px;
+  border-radius: 5px 5px 11px 11px;
+  background: linear-gradient(180deg, #fff 0 28%, #8a2c1d 29% 66%, #f2ede4 67%);
+}
+
+.momentProductCard b,
+.momentOrderTray b {
+  display: block;
+  color: var(--ink);
+  font-size: 14px;
+  line-height: 1.05;
+}
+
+.momentProductCard small {
+  color: var(--coffee);
+  font-size: 11px;
+  font-weight: 900;
+}
+
+.momentPrepared {
+  margin-top: 12px;
+  padding: 10px;
+  border-radius: 16px;
+  background: var(--ink);
+  color: #fff7ed;
+  font-size: 12px;
+  line-height: 1.2;
+}
+
+.momentOrderTray {
+  right: 4%;
+  bottom: 6%;
+  z-index: 4;
+  display: grid;
+  grid-template-columns: 42px 1fr;
+  align-items: center;
+  gap: 10px;
+  min-width: 190px;
+  padding: 12px;
+  border-radius: 20px;
+  background: rgba(255, 247, 237, 0.94);
+  box-shadow: 0 22px 50px rgba(0, 0, 0, 0.26);
+}
+
+.momentSelectedDrinkMini {
+  display: grid;
+  place-items: center;
+}
+
+.momentSipScene {
+  inset: 0;
+  z-index: 3;
+}
+
+.momentWindowSilhouette {
+  position: absolute;
+  left: 7%;
+  top: 20%;
+  width: 46%;
+  height: 50%;
+  border: 1px solid rgba(255, 247, 237, 0.14);
+  border-radius: 42px 10px 42px 10px;
+  background: linear-gradient(135deg, rgba(191, 220, 232, 0.1), transparent 60%);
+}
+
+.momentDeliveryHand {
+  position: absolute;
+  right: 4%;
+  bottom: 26%;
+  width: 34%;
+  height: 46px;
+  border-radius: 999px 0 0 999px;
+  background: rgba(255, 247, 237, 0.72);
+  transform: rotate(-8deg);
+}
+
+.momentDrinkHero {
+  position: absolute;
+  right: 23%;
+  bottom: 17%;
+  width: min(170px, 26vw);
+  aspect-ratio: 0.58;
+  border: 2px solid rgba(255, 247, 237, 0.72);
+  border-radius: 14px 14px 34px 34px;
+  background: rgba(255, 247, 237, 0.16);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.36);
+}
+
+.momentDrinkLid {
+  position: absolute;
+  left: -12%;
+  right: -12%;
+  top: -8%;
+  height: 13%;
+  border-radius: 999px;
+  background: rgba(255, 247, 237, 0.82);
+}
+
+.momentDrinkLiquid {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  top: 20%;
+  bottom: 34%;
+  border-radius: 10px 10px 22px 22px;
+  background: linear-gradient(180deg, rgba(138, 44, 29, 0.9), rgba(242, 138, 98, 0.7));
+}
+
+.momentDrinkSleeve {
+  position: absolute;
+  left: 8%;
+  right: 8%;
+  bottom: 18%;
+  display: grid;
+  place-items: center;
+  min-height: 24%;
+  background: #fff7ed;
+  color: var(--ink);
+  font-size: 13px;
+  font-weight: 900;
+  letter-spacing: 0.08em;
+}
+
+.momentDrinkSparkle {
+  position: absolute;
+  width: 10px;
+  aspect-ratio: 1;
+  border-radius: 50%;
+  background: #fff7ed;
+  box-shadow: 0 0 16px rgba(255, 247, 237, 0.82);
+}
+
+.momentDrinkSparkle.one {
+  right: -12px;
+  top: 18%;
+}
+
+.momentDrinkSparkle.two {
+  left: -18px;
+  top: 42%;
+}
+
+.momentDrinkSparkle.three {
+  right: 14px;
+  top: 9%;
+}
+
+.momentOrderFinalPanel {
+  position: absolute;
+  inset: 0;
+  display: grid;
+  place-content: center;
+  justify-items: center;
+  text-align: center;
+  padding: 24px;
+}
+
+.momentOrderFinalPanel h2 {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 0 0.22em;
+  max-width: 920px;
+  margin: 0;
+  color: #fff7ed;
+  font-size: clamp(3rem, 9vw, 8.2rem);
+  line-height: 0.84;
+}
+
+.momentOrderFinalPanel p {
+  margin: 22px 0;
+  color: rgba(255, 247, 237, 0.72);
+  font-size: clamp(1.2rem, 3vw, 2.2rem);
+}
+
+.momentCampaign {
+  padding: 14vh 0;
+  background: #fff7ed;
+}
+
+.momentCampaignIntro {
+  width: min(1180px, calc(100% - 30px));
+  margin: 0 auto 34px;
+}
+
+.momentCampaignIntro h2 {
+  max-width: 820px;
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(2.4rem, 7vw, 6.8rem);
+  line-height: 0.9;
+}
+
+.momentCampaignGrid {
+  width: min(1040px, calc(100% - 44px));
+  margin: 0 auto;
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  justify-content: center;
+  gap: 12px;
+}
+
+.momentCampaignFrame {
+  position: sticky;
+  top: 10vh;
+  min-height: clamp(420px, 56vh, 600px);
+  overflow: hidden;
+  border-radius: 8px;
+  background: var(--paper-deep);
+}
+
+.momentCampaignFrame:nth-child(2) {
+  top: 14vh;
+}
+
+.momentCampaignFrame:nth-child(3) {
+  top: 18vh;
+}
+
+.momentCampaignFrame:nth-child(4) {
+  top: 22vh;
+}
+
+.momentCampaignFrame img {
+  height: 100%;
+  object-fit: cover;
+}
+
+.momentCampaignFrame strong {
+  position: absolute;
+  left: 26px;
+  bottom: 22px;
+  color: #fff7ed;
+  font-size: clamp(3rem, 9vw, 9rem);
+  line-height: 0.78;
+  letter-spacing: 0;
+  text-shadow: 0 12px 40px rgba(0, 0, 0, 0.34);
+}
+
+.momentMenuPreview {
+  min-height: 100svh;
+  display: grid;
+  align-content: center;
+  gap: 28px;
+  padding: 14vh 0;
+}
+
+.momentMenuHeader {
+  display: grid;
+  gap: 10px;
+}
+
+.momentMenuTabs {
+  display: none;
+}
+
+.momentMenuGroups {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  align-items: start;
+  gap: 18px;
+}
+
+.momentMenuGroup {
+  overflow: hidden;
+  border: 1px solid var(--cream-line);
+  border-radius: 30px;
+  background: rgba(255, 247, 237, 0.44);
+  box-shadow: 0 28px 80px rgba(77, 43, 25, 0.08);
+}
+
+.momentMenuGroupHeader {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: 16px;
+  padding: 22px 24px;
+  border-bottom: 1px solid var(--cream-line);
+}
+
+.momentMenuGroupHeader h3 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(2.2rem, 5vw, 4.6rem);
+  line-height: 0.9;
+}
+
+.momentMenuGroupHeader span {
+  flex: none;
+  color: var(--soft-ink);
+  font-size: 12px;
+  font-weight: 900;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+}
+
+.momentMenuList {
+  display: grid;
+}
+
+.momentMenuItem {
+  min-height: 86px;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 18px;
+  padding: 18px 24px;
+  border-bottom: 1px solid var(--cream-line);
+}
+
+.momentMenuItem:last-child {
+  border-bottom: 0;
+}
+
+.momentMenuItem h4 {
+  margin: 0;
+  color: var(--ink);
+  font-size: clamp(1.08rem, 2vw, 1.55rem);
+  line-height: 1.08;
+}
+
+.momentMenuItem strong {
+  flex: none;
+  color: var(--coffee);
+  font-size: clamp(0.95rem, 1.5vw, 1.12rem);
+}
+
+.momentMenuState {
+  width: fit-content;
+  padding: 10px 0;
+  color: var(--soft-ink);
+}
+
+.momentBusiness {
+  min-height: 76svh;
+  display: grid;
+  grid-template-columns: 1.15fr 0.85fr;
+  align-items: center;
+  gap: 52px;
+  padding: 10vh 0;
+}
+
+.momentBusiness p {
+  font-size: clamp(1.05rem, 1.9vw, 1.45rem);
+}
+
+.momentLocation {
+  position: relative;
+  min-height: 90svh;
+  display: grid;
+  align-items: center;
+  padding: 12vh 0;
+  isolation: isolate;
+}
+
+.momentLocationMark {
+  position: absolute;
+  right: 0;
+  top: 50%;
+  z-index: -1;
+  transform: translateY(-50%);
+  color: rgba(255, 247, 237, 0.16);
+  font-size: clamp(18rem, 48vw, 42rem);
+  font-weight: 900;
+  line-height: 0.75;
+}
+
+.momentLocationContent {
+  max-width: 820px;
+}
+
+.momentLocation .momentFine,
+.momentLocation h2,
+.momentLocation p {
+  color: #fff7ed;
+}
+
+.momentLocation p {
+  color: rgba(255, 247, 237, 0.72);
+}
+
+.momentContactGrid {
+  display: grid;
+  grid-template-columns: minmax(150px, 0.8fr) minmax(260px, 1.28fr) minmax(180px, 0.92fr);
+  gap: 12px;
+  margin-top: 28px;
+}
+
+.momentContactGrid a {
+  min-height: 104px;
+  display: grid;
+  align-content: space-between;
+  gap: 14px;
+  padding: 17px 18px;
+  border: 1px solid rgba(255, 247, 237, 0.18);
+  border-radius: 22px;
+  background: rgba(255, 247, 237, 0.07);
+  color: #fff7ed;
+  text-decoration: none;
+  box-shadow: 0 24px 70px rgba(0, 0, 0, 0.14);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  transition: transform 180ms ease, background 180ms ease, border-color 180ms ease;
+}
+
+.momentContactGrid a:hover {
+  transform: translateY(-3px);
+  border-color: rgba(255, 247, 237, 0.34);
+  background: rgba(255, 247, 237, 0.12);
+}
+
+.momentContactGrid span {
+  color: rgba(255, 247, 237, 0.62);
+  font-size: 11px;
+  font-weight: 900;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+}
+
+.momentContactGrid strong {
+  overflow-wrap: anywhere;
+  font-size: clamp(0.98rem, 1.35vw, 1.18rem);
+  line-height: 1.08;
+}
+
+.momentClosing {
+  min-height: 100svh;
+  display: grid;
+  place-items: center;
+  gap: 40px;
+  padding: 14vh 18px;
+  background:
+    linear-gradient(180deg, rgba(21, 15, 12, 0), #110c09 18%),
+    #110c09;
+  color: #fff7ed;
+  text-align: center;
+}
+
+.momentClosing h2 {
+  width: min(1100px, 100%);
+}
+
+.momentClosing h2 span:last-child {
+  color: #fff7ed;
+}
+
+.momentClosing img {
+  width: min(180px, 42vw);
+  border-radius: 50%;
+  background: #fff7ed;
+  object-fit: cover;
+}
+
+.momentFooter {
+  min-height: 96px;
+  justify-content: center;
+  flex-wrap: wrap;
+  gap: 18px 28px;
+  padding: 28px 18px 36px;
+  background: #110c09;
+  color: rgba(255, 247, 237, 0.72);
+}
+
+.momentFooter a:first-child {
+  color: #fff7ed;
+  font-weight: 900;
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+}
+
+.momentFooter span {
+  color: #fff7ed;
+}
+
+.momentLanding[dir="rtl"] {
+  text-align: right;
+  font-family: "IBM Plex Sans Arabic", Manrope, system-ui, sans-serif;
+}
+
+.momentLanding[dir="rtl"] .momentKicker,
+.momentLanding[dir="rtl"] .momentFine,
+.momentLanding[dir="rtl"] .momentNav nav a,
+.momentLanding[dir="rtl"] .momentNavCta,
+.momentLanding[dir="rtl"] .momentLanguageToggle,
+.momentLanding[dir="rtl"] .momentButton,
+.momentLanding[dir="rtl"] .momentMenuGroupHeader span,
+.momentLanding[dir="rtl"] .momentContactGrid span,
+.momentLanding[dir="rtl"] .momentFooter a:first-child {
+  letter-spacing: 0.03em;
+  text-transform: none;
+}
+
+.momentLanding[dir="rtl"] .momentNavLogo,
+.momentLanding[dir="rtl"] .momentNav nav,
+.momentLanding[dir="rtl"] .momentNavActions,
+.momentLanding[dir="rtl"] .momentFooter {
+  direction: rtl;
+}
+
+.momentLanding[dir="rtl"] .momentNav nav {
+  gap: clamp(8px, 1.4vw, 20px);
+}
+
+.momentLanding[dir="rtl"] .momentNav nav a {
+  font-size: 13px;
+}
+
+.momentLanding[dir="rtl"] .momentHeroTitle {
+  max-width: min(980px, 100%);
+  font-size: clamp(4.2rem, 13vw, 10.5rem);
+  line-height: 1.16;
+  text-transform: none;
+}
+
+.momentLanding[dir="rtl"] .momentStatement h2,
+.momentLanding[dir="rtl"] .momentClosing h2 {
+  max-width: min(1120px, 100%);
+  font-size: clamp(3.2rem, 8.2vw, 8.4rem);
+  line-height: 1.24;
+  text-transform: none;
+  text-wrap: balance;
+}
+
+.momentLanding[dir="rtl"] .momentStoryCopy h2,
+.momentLanding[dir="rtl"] .momentSignatureCopy h2,
+.momentLanding[dir="rtl"] .momentMenuHeader h2,
+.momentLanding[dir="rtl"] .momentBusiness h2,
+.momentLanding[dir="rtl"] .momentLocation h2 {
+  font-size: clamp(2.3rem, 5.2vw, 5.2rem);
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+.momentLanding[dir="rtl"] .momentOrderScene h2 {
+  font-size: clamp(3.8rem, 8.8vw, 7.8rem);
+  line-height: 1.16;
+  text-transform: none;
+}
+
+.momentLanding[dir="rtl"] .momentOrderScene p,
+.momentLanding[dir="rtl"] .momentOrderFinal h3 {
+  font-size: clamp(1.35rem, 2.8vw, 2.5rem);
+  line-height: 1.22;
+  text-wrap: balance;
+}
+
+.momentLanding[dir="rtl"] .momentCampaignIntro h2 {
+  font-size: clamp(2.3rem, 5.8vw, 5.6rem);
+  line-height: 1.2;
+  text-wrap: balance;
+}
+
+.momentLanding[dir="rtl"] .momentCampaignFrame strong {
+  right: 26px;
+  left: auto;
+  font-size: clamp(2.2rem, 5.8vw, 5.8rem);
+  line-height: 1.18;
+  text-align: right;
+}
+
+.momentLanding[dir="rtl"] .momentMenuGroupHeader h3 {
+  font-size: clamp(2.1rem, 4.2vw, 3.8rem);
+  line-height: 1.2;
+}
+
+.momentLanding[dir="rtl"] .momentStoryCopy p,
+.momentLanding[dir="rtl"] .momentSignatureCopy p,
+.momentLanding[dir="rtl"] .momentMenuHeader p,
+.momentLanding[dir="rtl"] .momentBusiness p,
+.momentLanding[dir="rtl"] .momentLocation p {
+  line-height: 1.85;
+}
+
+.momentLanding[dir="rtl"] .momentSignatureWord {
+  font-size: clamp(4.3rem, 10vw, 9.5rem);
+  line-height: 1;
+  text-transform: none;
+  white-space: nowrap;
+}
+
+.momentLanding[dir="rtl"] .momentOrderSketch {
+  right: auto;
+  left: clamp(-18px, -1vw, 18px);
+  transform: translateY(-50%) rotate(1deg) scaleX(-1);
+}
+
+.momentLanding[dir="rtl"] .momentOrderSketch.menu {
+  transform: translateY(-50%) rotate(-1.5deg) scaleX(-1);
+}
+
+.momentLanding[dir="rtl"] .momentOrderSketch.drink {
+  right: auto;
+  left: clamp(-6px, 0vw, 22px);
+  transform: translateY(-50%) rotate(-1.5deg) scaleX(-1);
+}
+
+.momentLanding[dir="rtl"] .momentOrderTextPanel {
+  inset: 0 0 auto auto;
+}
+
+.momentLanding[dir="rtl"] .momentOrderTextPanel h2,
+.momentLanding[dir="rtl"] .momentOrderFinalPanel h2 {
+  line-height: 1.06;
+  text-transform: none;
+}
+
+.momentLanding[dir="rtl"] .momentPhone {
+  right: auto;
+  left: 12%;
+}
+
+.momentLanding[dir="rtl"] .momentQrStand {
+  left: auto;
+  right: 9%;
+}
+
+.momentLanding[dir="rtl"] .momentDeliveryHand {
+  right: auto;
+  left: 4%;
+  border-radius: 0 999px 999px 0;
+}
+
+.momentLanding[dir="rtl"] .momentDrinkHero {
+  right: auto;
+  left: 23%;
+}
+
+.momentMenuItem h4 {
+  unicode-bidi: plaintext;
+}
+
+.momentContactGrid a[href^="tel"] strong,
+.momentContactGrid a[href^="mailto"] strong {
+  direction: ltr;
+  text-align: start;
+  unicode-bidi: plaintext;
+}
+
+.momentLanding[dir="rtl"] .momentContactGrid strong {
+  font-size: clamp(0.95rem, 1.25vw, 1.1rem);
+  line-height: 1.18;
+}
+
+@media (max-width: 920px) {
+  .momentNav {
+    grid-template-columns: 1fr auto;
+    border-radius: 26px;
+  }
+
+  .momentNav nav {
+    display: none;
+  }
+
+  .momentStory,
+  .momentSignature,
+  .momentOrderSticky,
+  .momentBusiness {
+    grid-template-columns: 1fr;
+  }
+
+  .momentSignature {
+    min-height: 100svh;
+  }
+
+  .momentSignatureImage {
+    min-height: 48vh;
+  }
+
+  .momentOrderFilm {
+    min-height: auto;
+    padding: 0;
+  }
+
+  .momentOrderSticky {
+    position: relative;
+    padding: 0;
+  }
+
+  .momentOrderVisual {
+    height: 430px;
+  }
+
+  .momentOrderScene {
+    min-height: auto;
+    padding: 12px 0 26px;
+  }
+
+  .momentOrderStage {
+    grid-template-columns: 1fr;
+  }
+
+  .momentOrderTextStack {
+    min-height: 190px;
+  }
+
+  .momentSceneVisual {
+    min-height: 460px;
+  }
+
+  .momentOrderSceneText {
+    max-width: min(680px, 100%);
+  }
+
+  .momentOrderSketch {
+    right: 0;
+    width: min(280px, 42vw);
+    color: rgba(255, 247, 237, 0.28);
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderSketch {
+    right: auto;
+    left: 0;
+  }
+
+  .momentLanding[dir="rtl"] .momentStatement h2,
+  .momentLanding[dir="rtl"] .momentClosing h2 {
+    font-size: clamp(3.1rem, 10vw, 6.8rem);
+    line-height: 1.22;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderScene h2 {
+    font-size: clamp(3.4rem, 10vw, 6.8rem);
+  }
+
+  .momentOrderFinal {
+    padding-bottom: 0;
+  }
+
+  .momentCampaignGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .momentCampaignFrame,
+  .momentCampaignFrame:nth-child(n) {
+    position: relative;
+    top: auto;
+    min-height: 50vh;
+  }
+
+  .momentMenuGroups,
+  .momentContactGrid {
+    grid-template-columns: 1fr;
+  }
+
+  .momentContactGrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
+
+  .momentContactGrid a:nth-child(2) {
+    grid-column: 1 / -1;
+  }
+}
+
+@media (max-width: 620px) {
+  .momentNav {
+    top: 10px;
+    width: calc(100% - 20px);
+    min-height: 56px;
+    padding: 8px 8px 8px 12px;
+  }
+
+  .momentNavLogo span {
+    display: none;
+  }
+
+  .momentNavCta {
+    min-height: 40px;
+    padding: 0 13px;
+    font-size: 10px;
+  }
+
+  .momentLanguageToggle {
+    min-height: 40px;
+    padding: 0 11px;
+    font-size: 10px;
+  }
+
+  .momentNavActions {
+    gap: 6px;
+  }
+
+  .momentHero {
+    min-height: 92svh;
+  }
+
+  .momentHeroOverlay {
+    background:
+      linear-gradient(180deg, rgba(15, 10, 8, 0.36), rgba(15, 10, 8, 0.42) 42%, rgba(15, 10, 8, 0.9)),
+      linear-gradient(90deg, rgba(15, 10, 8, 0.78), rgba(15, 10, 8, 0.24));
+  }
+
+  .momentHeroImage {
+    object-position: 58% center;
+  }
+
+  .momentHeroContent {
+    align-self: end;
+    padding: 0 0 138px;
+  }
+
+  .momentHeroTitle {
+    flex-direction: column;
+    font-size: clamp(3.85rem, 20vw, 5.2rem);
+    overflow: visible;
+    line-height: 0.88;
+  }
+
+  .momentLanding[dir="rtl"] .momentHeroTitle {
+    flex-direction: row;
+    font-size: clamp(3.7rem, 17vw, 5.7rem);
+    line-height: 1.18;
+  }
+
+  .momentHeroLine {
+    margin-top: 12px;
+    position: relative;
+    z-index: 2;
+    color: #fff7ed;
+    font-size: clamp(1.05rem, 5vw, 1.45rem);
+    text-shadow: 0 8px 24px rgba(0, 0, 0, 0.55);
+  }
+
+  .momentScrollHint {
+    width: 60px;
+    right: 18px;
+    bottom: 18px;
+  }
+
+  .momentStatement {
+    min-height: 78svh;
+    place-items: end start;
+  }
+
+  .momentLanding[dir="rtl"] .momentStatement {
+    place-items: end stretch;
+  }
+
+  .momentLanding[dir="rtl"] .momentStatement h2,
+  .momentLanding[dir="rtl"] .momentClosing h2 {
+    font-size: clamp(2.8rem, 12.6vw, 4.9rem);
+    line-height: 1.26;
+  }
+
+  .momentStory,
+  .momentSignature,
+  .momentMenuPreview,
+  .momentBusiness,
+  .momentLocation {
+    width: min(100% - 22px, 1180px);
+  }
+
+  .momentStory,
+  .momentSignature,
+  .momentMenuPreview,
+  .momentBusiness,
+  .momentLocation,
+  .momentCampaign {
+    padding-top: 9vh;
+    padding-bottom: 9vh;
+  }
+
+  .momentStoryMedia {
+    border-radius: 22px 22px 6px 22px;
+  }
+
+  .momentSignature {
+    gap: 16px;
+    min-height: auto;
+    perspective: 900px;
+  }
+
+  .momentSignatureWord {
+    top: 8vh;
+    font-size: 5.4rem;
+  }
+
+  .momentLanding[dir="rtl"] .momentStoryCopy h2,
+  .momentLanding[dir="rtl"] .momentSignatureCopy h2,
+  .momentLanding[dir="rtl"] .momentMenuHeader h2,
+  .momentLanding[dir="rtl"] .momentBusiness h2,
+  .momentLanding[dir="rtl"] .momentLocation h2 {
+    font-size: clamp(2rem, 9.4vw, 3.6rem);
+    line-height: 1.26;
+  }
+
+  .momentLanding[dir="rtl"] .momentSignatureWord {
+    font-size: clamp(3.3rem, 14vw, 5rem);
+  }
+
+  .momentSignatureImageShell {
+    border-radius: 8px 42px 8px 8px;
+    transform-origin: center bottom;
+    will-change: transform, opacity;
+  }
+
+  .momentSignatureImage {
+    min-height: 0;
+    height: auto;
+    clip-path: inset(0% 0% 0% 0%) !important;
+    object-fit: contain;
+  }
+
+  .momentSignatureShine {
+    position: absolute;
+    top: -42%;
+    bottom: -42%;
+    left: -28%;
+    z-index: 2;
+    display: block;
+    width: 34%;
+    transform: skewX(-18deg);
+    border-radius: 999px;
+    background:
+      linear-gradient(
+        90deg,
+        transparent,
+        rgba(255, 247, 237, 0.18) 36%,
+        rgba(255, 247, 237, 0.52) 50%,
+        rgba(255, 247, 237, 0.16) 64%,
+        transparent
+      );
+    mix-blend-mode: screen;
+    pointer-events: none;
+  }
+
+  .momentOrderVisual {
+    height: 350px;
+    border-radius: 28px;
+  }
+
+  .momentOrderScenes {
+    gap: 28px;
+  }
+
+  .momentOrderFilm {
+    min-height: auto;
+  }
+
+  .momentOrderInner {
+    width: min(100% - 22px, 1180px);
+    padding: 76px 0 18px;
+    gap: 12px;
+  }
+
+  .momentOrderIntro {
+    width: min(100% - 22px, 1180px);
+    min-height: 62svh;
+    padding: 14vh 0 7vh;
+  }
+
+  .momentOrderIntro h2 {
+    font-size: clamp(2.25rem, 12vw, 4.1rem);
+    line-height: 1;
+  }
+
+  .momentOrderIntro > p:last-child {
+    margin-top: 14px;
+    font-size: 1rem;
+  }
+
+  .momentOrderEyebrow {
+    font-size: 10px;
+    letter-spacing: 0.14em;
+  }
+
+  .momentOrderProgress {
+    grid-template-columns: auto minmax(34px, 1fr) auto minmax(34px, 1fr) auto;
+    gap: 6px;
+  }
+
+  .momentProgressStep {
+    width: 42px;
+    font-size: 10px;
+  }
+
+  .momentOrderStage {
+    min-height: calc(100svh - 154px);
+    grid-template-columns: 1fr;
+    align-items: start;
+    gap: 8px;
+    padding: 20px 14px;
+    border-radius: 28px;
+  }
+
+  .momentOrderTextStack {
+    min-height: 136px;
+  }
+
+  .momentOrderTextPanel {
+    max-width: 300px;
+  }
+
+  .momentOrderTextPanel h2 {
+    font-size: clamp(3.4rem, 17vw, 5.2rem);
+    line-height: 0.82;
+  }
+
+  .momentOrderTextPanel p {
+    margin-top: 10px;
+    font-size: clamp(1rem, 5.4vw, 1.35rem);
+    line-height: 1.18;
+  }
+
+  .momentSceneVisual {
+    min-height: min(400px, calc(100svh - 304px));
+  }
+
+  .momentPhone {
+    left: 50%;
+    right: auto;
+    bottom: 4%;
+    width: min(220px, 56vw);
+    translate: -50% 0;
+    transform: none;
+  }
+
+  .momentLanding[dir="rtl"] .momentPhone {
+    left: 50%;
+    right: auto;
+    translate: -50% 0;
+    transform: none;
+  }
+
+  .momentQrStand {
+    left: 5%;
+    bottom: 19%;
+    width: min(128px, 34vw);
+  }
+
+  .momentLanding[dir="rtl"] .momentQrStand {
+    right: 5%;
+    left: auto;
+  }
+
+  .momentQrPlate {
+    padding: 11px;
+    border-radius: 18px;
+  }
+
+  .momentQrCode {
+    gap: 3px;
+    padding: 6px;
+  }
+
+  .momentProductCard {
+    grid-template-columns: 36px 1fr;
+    padding: 8px;
+    border-radius: 14px;
+  }
+
+  .momentProductCup {
+    height: 40px;
+  }
+
+  .momentProductCard b,
+  .momentOrderTray b {
+    font-size: 12px;
+  }
+
+  .momentOrderTray {
+    right: 4%;
+    bottom: 4%;
+    min-width: 154px;
+    grid-template-columns: 34px 1fr;
+    padding: 9px;
+    border-radius: 16px;
+  }
+
+  .momentDrinkHero {
+    right: 26%;
+    bottom: 10%;
+    width: min(142px, 38vw);
+  }
+
+  .momentLanding[dir="rtl"] .momentDrinkHero {
+    right: auto;
+    left: 26%;
+  }
+
+  .momentDeliveryHand {
+    right: -8%;
+    bottom: 24%;
+    width: 42%;
+  }
+
+  .momentLanding[dir="rtl"] .momentDeliveryHand {
+    right: auto;
+    left: -8%;
+  }
+
+  .momentWindowSilhouette {
+    left: 3%;
+    top: 22%;
+    width: 48%;
+  }
+
+  .momentOrderFinalPanel h2 {
+    display: grid;
+    gap: 6px;
+    font-size: clamp(3rem, 16vw, 5.4rem);
+    line-height: 0.86;
+  }
+
+  .momentOrderFinalPanel p {
+    font-size: 1.2rem;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderIntro h2 {
+    font-size: clamp(2.15rem, 10.6vw, 3.6rem);
+    line-height: 1.18;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderIntro > p:last-child {
+    line-height: 1.75;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderTextPanel {
+    max-width: 270px;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderTextPanel h2 {
+    font-size: clamp(2.55rem, 11.5vw, 4rem);
+    line-height: 1.08;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderTextPanel p {
+    max-width: 260px;
+    font-size: clamp(0.95rem, 4.4vw, 1.12rem);
+    line-height: 1.55;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderFinalPanel {
+    gap: 8px;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderFinalPanel h2 {
+    font-size: clamp(2.2rem, 10.8vw, 3.55rem);
+    line-height: 1.12;
+    gap: 2px;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderFinalPanel p {
+    max-width: 270px;
+    margin: 12px 0;
+    font-size: 1rem;
+    line-height: 1.55;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderFinalPanel .momentButton {
+    min-height: 42px;
+    padding: 0 18px;
+    font-size: 12px;
+  }
+
+  .momentOrderSketch {
+    right: -30px;
+    top: 42%;
+    width: min(200px, 54vw);
+    color: rgba(255, 247, 237, 0.2);
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderSketch {
+    right: auto;
+    left: -30px;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderScene h2 {
+    font-size: clamp(2.9rem, 13vw, 4.6rem);
+    line-height: 1.2;
+  }
+
+  .momentLanding[dir="rtl"] .momentOrderScene p,
+  .momentLanding[dir="rtl"] .momentOrderFinal h3 {
+    font-size: clamp(1.18rem, 6.4vw, 1.9rem);
+    line-height: 1.28;
+  }
+
+  .momentCampaignFrame,
+  .momentCampaignFrame:nth-child(n) {
+    min-height: 46vh;
+  }
+
+  .momentLanding[dir="rtl"] .momentCampaignIntro h2 {
+    font-size: clamp(2rem, 9.6vw, 3.8rem);
+    line-height: 1.24;
+  }
+
+  .momentLanding[dir="rtl"] .momentCampaignFrame strong {
+    font-size: clamp(2.2rem, 14vw, 4.8rem);
+  }
+
+  .momentMenuPreview {
+    min-height: auto;
+    align-content: start;
+    gap: 18px;
+  }
+
+  .momentMenuGroup {
+    border-radius: 22px;
+  }
+
+  .momentContactGrid {
+    grid-template-columns: 1fr;
+    gap: 10px;
+    margin-top: 22px;
+  }
+
+  .momentContactGrid a,
+  .momentContactGrid a:nth-child(2) {
+    grid-column: auto;
+    min-height: 82px;
+    padding: 14px 16px;
+    border-radius: 18px;
+  }
+
+  .momentLanding[dir="rtl"] .momentContactGrid strong {
+    font-size: 0.98rem;
+  }
+
+  .momentMenuTabs {
+    position: sticky;
+    top: 74px;
+    z-index: 5;
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    gap: 6px;
+    padding: 6px;
+    border: 1px solid var(--cream-line);
+    border-radius: 999px;
+    background: rgba(255, 247, 237, 0.9);
+    box-shadow: 0 18px 50px rgba(77, 43, 25, 0.12);
+    backdrop-filter: blur(14px);
+    -webkit-backdrop-filter: blur(14px);
+  }
+
+  .momentMenuTabs button {
+    min-height: 42px;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    gap: 8px;
+    border: 0;
+    border-radius: 999px;
+    background: transparent;
+    color: var(--ink);
+    font: inherit;
+    font-size: 13px;
+    font-weight: 900;
+  }
+
+  .momentMenuTabs button.isActive {
+    background: var(--ink);
+    color: #fff7ed;
+  }
+
+  .momentMenuTabs span {
+    display: inline-grid;
+    place-items: center;
+    min-width: 22px;
+    height: 22px;
+    padding: 0 6px;
+    border-radius: 999px;
+    background: rgba(107, 67, 43, 0.12);
+    font-size: 11px;
+  }
+
+  .momentMenuTabs button.isActive span {
+    background: rgba(255, 247, 237, 0.16);
+  }
+
+  .momentMenuGroup:not(.isActive) {
+    display: none;
+  }
+
+  .momentMenuGroupHeader,
+  .momentMenuItem {
+    padding: 14px 16px;
+  }
+
+  .momentMenuGroupHeader h3 {
+    font-size: 2.15rem;
+  }
+
+  .momentMenuGroupHeader span {
+    font-size: 10px;
+  }
+
+  .momentMenuList {
+    max-height: min(56vh, 520px);
+    overflow-y: auto;
+    overscroll-behavior: contain;
+    -webkit-overflow-scrolling: touch;
+  }
+
+  .momentMenuItem {
+    min-height: 58px;
+    align-items: center;
+    flex-direction: row;
+    gap: 12px;
+  }
+
+  .momentMenuItem h4 {
+    font-size: 1rem;
+    line-height: 1.16;
+  }
+
+  .momentMenuItem strong {
+    font-size: 0.9rem;
+    white-space: nowrap;
+  }
+
+  .momentLocationMark {
+    right: -20vw;
+  }
+
+  .momentFooter {
+    flex-direction: column;
+    align-items: center;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .momentLanding *,
+  .momentLanding *::before,
+  .momentLanding *::after {
+    scroll-behavior: auto !important;
+    transition-duration: 0.001ms !important;
+    animation-duration: 0.001ms !important;
+  }
+
+  .momentCampaignFrame,
+  .momentOrderSticky,
+  .momentOrderPinned {
+    position: relative;
+    top: auto;
+  }
+
+  .momentOrderFilm {
+    min-height: auto;
+  }
+
+  .momentOrderStage {
+    min-height: auto;
+  }
+
+  .momentOrderTextStack {
+    display: grid;
+    gap: 18px;
+  }
+
+  .momentOrderTextPanel,
+  .momentOrderFinalPanel {
+    position: relative;
+    inset: auto;
+    opacity: 1 !important;
+    visibility: visible !important;
+    transform: none !important;
+  }
+}

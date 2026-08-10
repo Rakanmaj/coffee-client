@@ -15,6 +15,7 @@ const ManageMenu = lazy(() => import("./pages/ManageMenu/ManageMenu"));
 const Storage = lazy(() => import("./pages/Storage/Storage"));
 const DriveThru = lazy(() => import("./pages/DriveThru/DriveThru"));
 const DriveThroughOrders = lazy(() => import("./pages/DriveThroughOrders/DriveThroughOrders"));
+const MomentLanding = lazy(() => import("./pages/MomentLanding/MomentLanding"));
 
 export default function App() {
   const location = useLocation();
@@ -26,14 +27,16 @@ export default function App() {
       normalized_path.startsWith("/drive-thru/") ||
       normalized_path === "/drive-through" ||
       normalized_path.startsWith("/drive-through/"));
+  const is_moment_landing = normalized_path === "/moment";
 
   return (
     <AppProvider>
-      <DriveThroughProvider enabled={driveThroughEnabled && !is_drive_customer}>
-        {!is_drive_customer ? <Navbar /> : null}
+      <DriveThroughProvider enabled={driveThroughEnabled && !is_drive_customer && !is_moment_landing}>
+        {!is_drive_customer && !is_moment_landing ? <Navbar /> : null}
         <Suspense fallback={null}>
         <Routes>
           <Route path="/auth" element={<Auth />} />
+          <Route path="/moment" element={<MomentLanding />} />
           {driveThroughEnabled ? <Route path="/drive-thru/*" element={<DriveThru />} /> : null}
           {driveThroughEnabled ? <Route path="/drive-through/*" element={<DriveThru />} /> : null}
 
