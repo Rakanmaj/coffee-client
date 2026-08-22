@@ -487,73 +487,102 @@ export default function MomentLanding() {
 
       const orderSection = root.querySelector(".momentOrderPinned");
       if (orderSection) {
+        const orderSelect = gsap.utils.selector(orderSection);
+        const phoneScanX = isPhone ? (isRtl ? -20 : 20) : (isRtl ? -42 : 42);
+        const phoneSipX = isPhone ? (isRtl ? 70 : -70) : (isRtl ? 118 : -118);
+        const qrExitX = isPhone ? (isRtl ? -72 : 72) : (isRtl ? -135 : 135);
+        const qrExitY = isPhone ? -30 : -54;
+
         const orderTimeline = gsap.timeline({
-          defaults: { ease: "none" },
+          defaults: { ease: "power2.out" },
           scrollTrigger: {
             trigger: orderSection,
             start: "top top",
-            end: "+=360%",
+            end: isPhone ? "+=430%" : "+=390%",
             scrub: 0.65,
-            pin: ".momentOrderPinned",
+            pin: orderSection,
             anticipatePin: 1,
           },
         });
 
-        gsap.set(".momentProgressCircle", { strokeDashoffset: 1 });
-        gsap.set(".momentProgressCheck, .momentOrderTextPanel:not([data-story-step='scan']), .momentPhoneMenu, .momentOrderTray, .momentPrepared, .momentSipScene, .momentOrderFinalPanel", {
+        gsap.set(orderSelect(".momentProgressCircle"), { strokeDashoffset: 1 });
+        gsap.set(orderSelect(".momentProgressCheck, .momentOrderTextPanel:not([data-story-step='scan']), .momentPhoneMenu, .momentOrderTray, .momentPrepared, .momentSipScene, .momentOrderFinalPanel"), {
           autoAlpha: 0,
         });
-        gsap.set(".momentProgressLineFill", { scaleX: 0, transformOrigin: isRtl ? "right center" : "left center" });
-        gsap.set(".momentPhone", { autoAlpha: 0, y: 120, scale: 0.82 });
-        gsap.set(".momentQrStand", { autoAlpha: 0, y: 34, scale: 0.92 });
-        gsap.set(".momentFocusFrame, .momentSuccessPill", { autoAlpha: 0, scale: 0.9 });
-        gsap.set(".momentScanLine", { autoAlpha: 0, yPercent: -130 });
-        gsap.set(".momentProductCard.isFeatured", { transformOrigin: "center center" });
-        gsap.set(".momentDrinkHero", { autoAlpha: 0, x: isRtl ? -120 : 120, scale: 0.68, rotate: isRtl ? -5 : 5 });
-        gsap.set(".momentDeliveryHand", { autoAlpha: 0, x: isRtl ? -70 : 70 });
-        gsap.set(".momentDrinkSparkle", { autoAlpha: 0, scale: 0.3 });
+        gsap.set(orderSelect(".momentProgressLineFill"), { scaleX: 0, transformOrigin: isRtl ? "right center" : "left center" });
+        gsap.set(orderSelect(".momentPhone"), { autoAlpha: 0, y: isPhone ? 72 : 120, scale: isPhone ? 0.9 : 0.82 });
+        gsap.set(orderSelect(".momentQrStand"), { autoAlpha: 0, y: isPhone ? 24 : 34, scale: 0.92 });
+        gsap.set(orderSelect(".momentFocusFrame, .momentSuccessPill, .momentScanGlow, .momentQrPulse, .momentQrRipple, .momentQrCheck, .momentPhoneGlow, .momentPhoneScanBeam"), {
+          autoAlpha: 0,
+        });
+        gsap.set(orderSelect(".momentPhoneScanBeam"), { yPercent: -120 });
+        gsap.set(orderSelect(".momentQrShine"), { xPercent: -140 });
+        gsap.set(orderSelect(".momentFocusFrame, .momentQrCheck"), { scale: 0.9 });
+        gsap.set(orderSelect(".momentQrPulse, .momentQrRipple"), { scale: 0.72 });
+        gsap.set(orderSelect(".momentScanLine"), { autoAlpha: 0, yPercent: -135 });
+        gsap.set(orderSelect(".momentProductCard.isFeatured"), { transformOrigin: "center center" });
+        gsap.set(orderSelect(".momentSelectedDrinkMini"), { autoAlpha: 0, y: 12, scale: 0.82 });
+        gsap.set(orderSelect(".momentDrinkHero"), { autoAlpha: 0, x: isRtl ? -120 : 120, scale: 0.68, rotate: isRtl ? -5 : 5 });
+        gsap.set(orderSelect(".momentDeliveryHand"), { autoAlpha: 0, x: isRtl ? -70 : 70 });
+        gsap.set(orderSelect(".momentDrinkSparkle"), { autoAlpha: 0, scale: 0.3 });
 
         orderTimeline
-          .fromTo(".momentOrderEyebrow", { autoAlpha: 0, y: -12 }, { autoAlpha: 1, y: 0, duration: 0.18 }, 0)
-          .to(".momentProgressCircle[data-step='1']", { strokeDashoffset: 0, duration: 0.72 }, 0)
-          .to(".momentQrStand", { autoAlpha: 1, y: 0, scale: 1, duration: 0.24 }, 0.04)
-          .to(".momentPhone", { autoAlpha: 1, y: 0, scale: 0.92, duration: 0.34 }, 0.18)
-          .to(".momentPhone", { x: isRtl ? -42 : 42, y: -20, scale: 0.96, duration: 0.26 }, 0.46)
-          .to(".momentScanLine", { autoAlpha: 1, yPercent: 120, duration: 0.24 }, 0.52)
-          .to(".momentFocusFrame", { autoAlpha: 1, scale: 1, duration: 0.18 }, 0.58)
-          .to(".momentSuccessPill", { autoAlpha: 1, scale: 1, duration: 0.14 }, 0.73)
-          .to(".momentQrStand", { scale: 0.28, x: isRtl ? -135 : 135, y: -54, autoAlpha: 0.35, duration: 0.28 }, 0.82)
-          .to(".momentProgressNumber[data-step='1']", { autoAlpha: 0, duration: 0.08 }, 0.94)
-          .to(".momentProgressCheck[data-step='1']", { autoAlpha: 1, duration: 0.1 }, 0.94)
-          .to(".momentProgressLineFill[data-line='1']", { scaleX: 1, duration: 0.25 }, 0.98)
-          .to(".momentProgressCircle[data-step='2']", { strokeDashoffset: 0, duration: 0.74 }, 1.05)
-          .to(".momentOrderTextPanel[data-story-step='scan']", { autoAlpha: 0, y: -28, duration: 0.2 }, 1.02)
-          .fromTo(".momentOrderTextPanel[data-story-step='order']", { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.22 }, 1.08)
-          .to(".momentPhoneScan", { autoAlpha: 0, duration: 0.18 }, 1.08)
-          .to(".momentPhoneMenu", { autoAlpha: 1, duration: 0.22 }, 1.12)
-          .to(".momentPhone", { x: 0, y: 0, scale: 1.08, duration: 0.3 }, 1.12)
-          .to(".momentOrderBackdropWarm", { autoAlpha: 0.34, duration: 0.54 }, 1.14)
-          .to(".momentMenuScroller", { y: -74, duration: 0.5 }, 1.28)
-          .to(".momentProductCard.isFeatured", { scale: 1.08, y: -6, duration: 0.24 }, 1.47)
-          .to(".momentOrderTray", { autoAlpha: 1, y: 0, duration: 0.22 }, 1.62)
-          .to(".momentSelectedDrinkMini", { y: 0, scale: 1, autoAlpha: 1, duration: 0.22 }, 1.66)
-          .to(".momentPrepared", { autoAlpha: 1, y: 0, duration: 0.18 }, 1.82)
-          .to(".momentProgressNumber[data-step='2']", { autoAlpha: 0, duration: 0.08 }, 1.92)
-          .to(".momentProgressCheck[data-step='2']", { autoAlpha: 1, duration: 0.1 }, 1.92)
-          .to(".momentProgressLineFill[data-line='2']", { scaleX: 1, duration: 0.25 }, 1.98)
-          .to(".momentProgressCircle[data-step='3']", { strokeDashoffset: 0, duration: 0.72 }, 2.06)
-          .to(".momentOrderTextPanel[data-story-step='order']", { autoAlpha: 0, y: -28, duration: 0.2 }, 2.06)
-          .fromTo(".momentOrderTextPanel[data-story-step='sip']", { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.22 }, 2.14)
-          .to(".momentPhone", { x: isRtl ? 118 : -118, y: 18, scale: 0.78, autoAlpha: 0.34, duration: 0.36 }, 2.14)
-          .to(".momentSipScene", { autoAlpha: 1, duration: 0.28 }, 2.16)
-          .to(".momentDrinkHero", { autoAlpha: 1, x: 0, scale: 1, rotate: 0, duration: 0.42 }, 2.24)
-          .to(".momentDeliveryHand", { autoAlpha: 1, x: 0, duration: 0.3 }, 2.36)
-          .to(".momentDrinkHero", { x: isRtl ? 42 : -42, y: -8, duration: 0.32 }, 2.52)
-          .to(".momentDrinkSparkle", { autoAlpha: 1, scale: 1, stagger: 0.04, duration: 0.18 }, 2.65)
-          .to(".momentProgressNumber[data-step='3']", { autoAlpha: 0, duration: 0.08 }, 2.82)
-          .to(".momentProgressCheck[data-step='3']", { autoAlpha: 1, duration: 0.1 }, 2.82)
-          .to(".momentPhone, .momentQrStand, .momentSipScene, .momentOrderTray, .momentOrderTextPanel[data-story-step='sip']", { autoAlpha: 0, scale: 0.92, duration: 0.28 }, 3.02)
-          .fromTo(".momentOrderFinalPanel", { autoAlpha: 0, y: 32, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.36 }, 3.12);
+          .addLabel("scan", 0)
+          .fromTo(orderSelect(".momentOrderEyebrow"), { autoAlpha: 0, y: -12 }, { autoAlpha: 1, y: 0, duration: 0.22 }, "scan")
+          .to(orderSelect(".momentProgressCircle[data-step='1']"), { strokeDashoffset: 0, duration: 1.08, ease: "none" }, "scan")
+          .to(orderSelect(".momentQrStand"), { autoAlpha: 1, y: 0, scale: 1, duration: 0.34 }, "scan+=0.05")
+          .to(orderSelect(".momentPhone"), { autoAlpha: 1, y: 0, scale: isPhone ? 0.96 : 0.92, duration: 0.42 }, "scan+=0.18")
+          .to(orderSelect(".momentPhone"), { x: phoneScanX, y: isPhone ? -12 : -20, scale: isPhone ? 1.02 : 0.98, duration: 0.46, ease: "power2.inOut" }, "scan+=0.48")
+          .to(orderSelect(".momentPhoneGlow"), { autoAlpha: 1, scale: 1, duration: 0.24 }, "scan+=0.56")
+          .to(orderSelect(".momentFocusFrame"), { autoAlpha: 1, scale: 1, duration: 0.24 }, "scan+=0.7")
+          .to(orderSelect(".momentQrShine"), { xPercent: 430, duration: 0.62, ease: "power2.inOut" }, "scan+=0.72")
+          .to(orderSelect(".momentPhoneScanBeam"), { autoAlpha: 1, yPercent: 120, duration: 0.5, ease: "power2.inOut" }, "scan+=0.74")
+          .to(orderSelect(".momentScanGlow"), { autoAlpha: 1, scaleY: 1, duration: 0.18 }, "scan+=0.76")
+          .to(orderSelect(".momentScanLine"), { autoAlpha: 1, yPercent: 132, duration: 0.56, ease: "power2.inOut" }, "scan+=0.78")
+          .to(orderSelect(".momentQrPulse"), { autoAlpha: 1, scale: 1, duration: 0.26 }, "scan+=0.9")
+          .to(orderSelect(".momentQrPlate"), { scale: 1.035, duration: 0.18, yoyo: true, repeat: 1, ease: "sine.inOut" }, "scan+=1.02")
+          .to(orderSelect(".momentQrRipple"), { autoAlpha: 1, scale: 1.18, duration: 0.34 }, "scan+=1.12")
+          .to(orderSelect(".momentQrCheck"), { autoAlpha: 1, scale: 1, duration: 0.18, ease: "back.out(1.8)" }, "scan+=1.22")
+          .to(orderSelect(".momentSuccessPill"), { autoAlpha: 1, scale: 1, duration: 0.18, ease: "back.out(1.4)" }, "scan+=1.26")
+          .to(orderSelect(".momentPhoneGlow, .momentScanGlow"), { autoAlpha: 0, duration: 0.24 }, "scan+=1.4")
+          .to(orderSelect(".momentQrStand"), { scale: isPhone ? 0.42 : 0.32, x: qrExitX, y: qrExitY, autoAlpha: 0.42, duration: 0.48, ease: "power2.inOut" }, "scan+=1.52")
+          .to(orderSelect(".momentProgressNumber[data-step='1']"), { autoAlpha: 0, duration: 0.1 }, "scan+=1.66")
+          .to(orderSelect(".momentProgressCheck[data-step='1']"), { autoAlpha: 1, duration: 0.12 }, "scan+=1.66")
+          .to(orderSelect(".momentProgressLineFill[data-line='1']"), { scaleX: 1, duration: 0.3, ease: "none" }, "scan+=1.72")
+
+          .addLabel("order", "scan+=1.9")
+          .to(orderSelect(".momentProgressCircle[data-step='2']"), { strokeDashoffset: 0, duration: 1.04, ease: "none" }, "order")
+          .to(orderSelect(".momentOrderTextPanel[data-story-step='scan']"), { autoAlpha: 0, y: -28, duration: 0.24 }, "order")
+          .fromTo(orderSelect(".momentOrderTextPanel[data-story-step='order']"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.28 }, "order+=0.1")
+          .to(orderSelect(".momentPhoneScan"), { autoAlpha: 0, duration: 0.22 }, "order+=0.08")
+          .to(orderSelect(".momentPhoneMenu"), { autoAlpha: 1, duration: 0.26 }, "order+=0.14")
+          .to(orderSelect(".momentPhone"), { x: 0, y: 0, scale: isPhone ? 1.04 : 1.08, duration: 0.38 }, "order+=0.14")
+          .to(orderSelect(".momentOrderBackdropWarm"), { autoAlpha: 0.36, duration: 0.62 }, "order+=0.18")
+          .to(orderSelect(".momentMenuScroller"), { y: isPhone ? -50 : -74, duration: 0.58, ease: "power1.inOut" }, "order+=0.34")
+          .to(orderSelect(".momentProductCard.isFeatured"), { scale: 1.08, y: -6, duration: 0.28 }, "order+=0.62")
+          .fromTo(orderSelect(".momentOrderTray"), { autoAlpha: 0, y: 18, scale: 0.94 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.28 }, "order+=0.8")
+          .to(orderSelect(".momentSelectedDrinkMini"), { y: 0, scale: 1, autoAlpha: 1, duration: 0.26 }, "order+=0.86")
+          .to(orderSelect(".momentPrepared"), { autoAlpha: 1, y: 0, duration: 0.22 }, "order+=1.06")
+          .to(orderSelect(".momentProgressNumber[data-step='2']"), { autoAlpha: 0, duration: 0.1 }, "order+=1.18")
+          .to(orderSelect(".momentProgressCheck[data-step='2']"), { autoAlpha: 1, duration: 0.12 }, "order+=1.18")
+          .to(orderSelect(".momentProgressLineFill[data-line='2']"), { scaleX: 1, duration: 0.3, ease: "none" }, "order+=1.26")
+
+          .addLabel("sip", "order+=1.48")
+          .to(orderSelect(".momentProgressCircle[data-step='3']"), { strokeDashoffset: 0, duration: 0.98, ease: "none" }, "sip")
+          .to(orderSelect(".momentOrderTextPanel[data-story-step='order']"), { autoAlpha: 0, y: -28, duration: 0.24 }, "sip")
+          .fromTo(orderSelect(".momentOrderTextPanel[data-story-step='sip']"), { autoAlpha: 0, y: 28 }, { autoAlpha: 1, y: 0, duration: 0.3 }, "sip+=0.12")
+          .to(orderSelect(".momentPhone"), { x: phoneSipX, y: isPhone ? 10 : 18, scale: isPhone ? 0.72 : 0.78, autoAlpha: 0.32, duration: 0.42 }, "sip+=0.12")
+          .to(orderSelect(".momentSipScene"), { autoAlpha: 1, duration: 0.34 }, "sip+=0.16")
+          .to(orderSelect(".momentDrinkHero"), { autoAlpha: 1, x: 0, scale: 1, rotate: 0, duration: 0.5, ease: "power3.out" }, "sip+=0.28")
+          .to(orderSelect(".momentDeliveryHand"), { autoAlpha: 1, x: 0, duration: 0.36 }, "sip+=0.42")
+          .to(orderSelect(".momentDrinkHero"), { x: isRtl ? 42 : -42, y: -8, duration: 0.34, ease: "power1.inOut" }, "sip+=0.74")
+          .to(orderSelect(".momentDrinkSparkle"), { autoAlpha: 1, scale: 1, stagger: 0.04, duration: 0.2 }, "sip+=0.88")
+          .to(orderSelect(".momentProgressNumber[data-step='3']"), { autoAlpha: 0, duration: 0.1 }, "sip+=1.04")
+          .to(orderSelect(".momentProgressCheck[data-step='3']"), { autoAlpha: 1, duration: 0.12 }, "sip+=1.04")
+
+          .addLabel("final", "sip+=1.34")
+          .to(orderSelect(".momentPhone, .momentQrStand, .momentSipScene, .momentOrderTray, .momentOrderTextPanel[data-story-step='sip']"), { autoAlpha: 0, scale: 0.92, duration: 0.34 }, "final")
+          .fromTo(orderSelect(".momentOrderFinalPanel"), { autoAlpha: 0, y: 32, scale: 0.96 }, { autoAlpha: 1, y: 0, scale: 1, duration: 0.42 }, "final+=0.14");
       }
 
       gsap.utils.toArray(".momentCampaignFrame").forEach((frame) => {
@@ -787,12 +816,22 @@ function CarOrderExperience({ copy, products }) {
             <div className="momentSceneVisual" aria-hidden="true">
               <div className="momentQrStand">
                 <div className="momentQrPlate">
+                  <span className="momentQrPulse" />
                   <span>MOMENT</span>
                   <div className="momentQrCode real">
+                    <span className="momentQrShine" />
                     <img className="momentQrImage" src={asset("drive-thru-qr.png")} alt="" />
                   </div>
+                  <div className="momentScanGlow" />
                   <div className="momentScanLine" />
-                  <div className="momentFocusFrame" />
+                  <div className="momentFocusFrame">
+                    <span />
+                    <span />
+                    <span />
+                    <span />
+                  </div>
+                  <div className="momentQrRipple" />
+                  <div className="momentQrCheck">✓</div>
                   <div className="momentSuccessPill">{copy.orderStory.ready}</div>
                 </div>
                 <span className="momentQrStem" />
@@ -804,11 +843,13 @@ function CarOrderExperience({ copy, products }) {
                   <div className="momentPhoneScan">
                     <span className="momentPhoneMiniLogo">Moment</span>
                     <div className="momentPhoneScanner">
+                      <div className="momentPhoneGlow" />
                       <img className="momentPhoneQrPreview" src={asset("drive-thru-qr.png")} alt="" />
-                      <span />
-                      <span />
-                      <span />
-                      <span />
+                      <div className="momentPhoneScanBeam" />
+                      <span className="momentScannerCorner topLeft" />
+                      <span className="momentScannerCorner topRight" />
+                      <span className="momentScannerCorner bottomLeft" />
+                      <span className="momentScannerCorner bottomRight" />
                     </div>
                   </div>
                   <div className="momentPhoneMenu">
