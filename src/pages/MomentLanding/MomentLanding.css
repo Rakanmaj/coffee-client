@@ -239,18 +239,134 @@
 }
 
 .momentHeroTitle {
-  display: flex;
-  flex-wrap: wrap;
+  position: relative;
+  display: inline-flex;
+  align-items: flex-end;
+  gap: clamp(0.02em, 0.55vw, 0.08em);
+  max-width: 100%;
   overflow: hidden;
   margin: 0;
-  font-size: clamp(5.2rem, 18vw, 16.5rem);
-  line-height: 0.78;
+  padding: 0 0 0.18em;
+  font-size: clamp(4.9rem, 14.5vw, 13.6rem);
+  line-height: 0.82;
   letter-spacing: 0;
   text-transform: uppercase;
+  text-shadow: 0 28px 60px rgba(0, 0, 0, 0.42);
 }
 
 .momentHeroTitle span {
   display: inline-block;
+}
+
+.momentHeroMark {
+  isolation: isolate;
+}
+
+.momentHeroLetter {
+  transform-origin: center bottom;
+  filter: drop-shadow(0 0 18px rgba(191, 220, 232, 0.12));
+}
+
+.momentHeroLetter.lift {
+  transform: translateY(-0.035em) rotate(-1.5deg);
+}
+
+.momentHeroLetter.lean {
+  transform: translateY(0.02em) rotate(1deg);
+}
+
+.momentHeroO {
+  position: relative;
+  width: 0.84em;
+  height: 0.78em;
+  display: inline-grid;
+  place-items: center;
+  align-self: center;
+  margin: 0 -0.02em;
+  border: 0.055em solid #fff7ed;
+  border-radius: 50% 50% 46% 46%;
+  transform: translateY(0.02em) rotate(-2deg);
+  background:
+    radial-gradient(circle at 50% 58%, rgba(242, 138, 98, 0.2), transparent 38%),
+    rgba(255, 247, 237, 0.03);
+  box-shadow:
+    inset 0 -0.035em 0 rgba(242, 138, 98, 0.44),
+    0 0 36px rgba(191, 220, 232, 0.12);
+}
+
+.momentHeroHeart {
+  position: relative;
+  width: 0.26em;
+  height: 0.26em;
+  transform: rotate(45deg) translateY(0.01em);
+  border-radius: 0 0 0.05em 0;
+  background: var(--peach);
+}
+
+.momentHeroHeart::before,
+.momentHeroHeart::after {
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: inherit;
+  content: "";
+}
+
+.momentHeroHeart::before {
+  left: -50%;
+}
+
+.momentHeroHeart::after {
+  top: -50%;
+}
+
+.momentHeroSteam {
+  position: absolute;
+  top: -0.23em;
+  width: 0.07em;
+  height: 0.22em;
+  border-left: 0.018em solid rgba(255, 247, 237, 0.78);
+  border-radius: 50%;
+  opacity: 0.76;
+}
+
+.momentHeroSteam.one {
+  left: 36%;
+  transform: rotate(-9deg);
+}
+
+.momentHeroSteam.two {
+  right: 34%;
+  transform: rotate(10deg);
+}
+
+.momentHeroStroke {
+  position: absolute;
+  left: 2%;
+  right: 2%;
+  bottom: 0.02em;
+  z-index: -1;
+  width: 96%;
+  height: 0.28em;
+  overflow: visible;
+  color: var(--peach);
+  opacity: 0.92;
+  filter: drop-shadow(0 10px 18px rgba(242, 138, 98, 0.22));
+}
+
+.momentHeroStroke path {
+  fill: none;
+  stroke: currentColor;
+  stroke-width: 10;
+  stroke-linecap: round;
+  stroke-linejoin: round;
+}
+
+.momentHeroArabicWord {
+  position: relative;
+  transform: rotate(-1deg);
+  text-shadow: 0 22px 54px rgba(0, 0, 0, 0.44);
 }
 
 .momentHeroLine {
@@ -1375,9 +1491,13 @@
 
 .momentLanding[dir="rtl"] .momentHeroTitle {
   max-width: min(980px, 100%);
-  font-size: clamp(4.2rem, 13vw, 10.5rem);
+  font-size: clamp(4rem, 11vw, 9.4rem);
   line-height: 1.16;
   text-transform: none;
+}
+
+.momentLanding[dir="rtl"] .momentHeroStroke {
+  transform: scaleX(-1);
 }
 
 .momentLanding[dir="rtl"] .momentStatement h2,
@@ -1667,16 +1787,29 @@
   }
 
   .momentHeroTitle {
-    flex-direction: column;
-    font-size: clamp(3.85rem, 20vw, 5.2rem);
+    flex-direction: row;
+    flex-wrap: wrap;
+    max-width: 94vw;
+    font-size: clamp(3.4rem, 17vw, 5.05rem);
     overflow: visible;
-    line-height: 0.88;
+    line-height: 0.92;
   }
 
   .momentLanding[dir="rtl"] .momentHeroTitle {
     flex-direction: row;
-    font-size: clamp(3.7rem, 17vw, 5.7rem);
+    font-size: clamp(3.25rem, 14vw, 5rem);
     line-height: 1.18;
+  }
+
+  .momentHeroO {
+    width: 0.8em;
+    height: 0.76em;
+    border-width: 0.06em;
+  }
+
+  .momentHeroStroke {
+    bottom: -0.04em;
+    height: 0.24em;
   }
 
   .momentHeroLine {

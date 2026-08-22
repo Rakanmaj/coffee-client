@@ -646,10 +646,26 @@ function HeroSection({ copy }) {
       <div className="momentHeroOverlay" />
       <div className="momentHeroContent">
         <p className="momentKicker">{copy.hero.kicker}</p>
-        <h1 className="momentHeroTitle" aria-label={copy.hero.title}>
-          {copy.hero.titleParts.map((part) => (
-            <span key={part}>{part}</span>
-          ))}
+        <h1 className="momentHeroTitle momentHeroMark" aria-label={copy.hero.title}>
+          {copy.hero.title.toLowerCase() === "moment" ? (
+            <>
+              <span className="momentHeroLetter lift">M</span>
+              <span className="momentHeroO" aria-hidden="true">
+                <span className="momentHeroHeart" />
+                <span className="momentHeroSteam one" />
+                <span className="momentHeroSteam two" />
+              </span>
+              <span className="momentHeroLetter">M</span>
+              <span className="momentHeroLetter lean">E</span>
+              <span className="momentHeroLetter">N</span>
+              <span className="momentHeroLetter lift">T</span>
+            </>
+          ) : (
+            <span className="momentHeroArabicWord">{copy.hero.title}</span>
+          )}
+          <svg className="momentHeroStroke" viewBox="0 0 760 80" aria-hidden="true">
+            <path d="M18 45C146 64 292 50 390 37C516 20 626 24 742 41" />
+          </svg>
         </h1>
         <p className="momentHeroLine">{copy.hero.line}</p>
       </div>
