@@ -1,7 +1,7 @@
 import { memo, useEffect, useMemo, useRef, useState } from "react";
 import { Stage, Layer, Group, Rect, Text, Image as CanvasImage, Path, Line } from "react-konva";
 import useImage from "use-image";
-import { STORY, PHOTO_FRAME as FRAME, GIRLS_DAY_LOGO } from "../../data/girlsDayTemplates";
+import { STORY, PHOTO_FRAME as FRAME } from "../../data/girlsDayTemplates";
 import { girlsDayArtwork } from "../../data/girlsDayArtwork";
 import { photoSize } from "../../utils/girlsDay/photoGeometry";
 import { usePinchZoom } from "../../hooks/usePinchZoom";
@@ -50,12 +50,12 @@ function fittedFont(text, maximum, width, family, weight = "normal") {
   return Math.min(maximum, maximum * width / Math.max(1, measured));
 }
 
-const Foreground = memo(function Foreground({ template, drink, drinkImage, logo, foreground, name, copy, fontReady }) {
+const Foreground = memo(function Foreground({ template, drink, foreground, name, copy, fontReady }) {
   const fontFamily = fontReady ? 'Manrope, "IBM Plex Sans Arabic", sans-serif' : 'Arial, sans-serif';
   const namePattern = /\p{Script=Arabic}/u.test(name) ? copy.story.personalizedRtlName : copy.story.personalized;
   const storyTitle = name.trim() ? namePattern.replace("{name}", name.trim()) : copy.story.unnamed;
-  const fontSize = useMemo(() => fittedFont(storyTitle, 67, 540, fontFamily), [storyTitle, fontFamily]);
-  const drinkSize = useMemo(() => fittedFont(copy.story.drinkTitles[drink.id], 28, 560, fontFamily, "bold"), [copy, drink.id, fontFamily]);
+  const fontSize = useMemo(() => fittedFont(storyTitle, 67, 840, fontFamily), [storyTitle, fontFamily]);
+  const drinkSize = useMemo(() => fittedFont(copy.story.drinkTitles[drink.id], 28, 840, fontFamily, "bold"), [copy, drink.id, fontFamily]);
   return <Layer listening={false}>
     <Text x={190} y={163} width={700} text={copy.brand} fontFamily={fontFamily} fontStyle="bold" fontSize={26} align="center" fill={template.ink} />
     <Text x={80} y={208} width={920} text={copy.story.title} fontFamily="Georgia" fontStyle="italic" fontSize={112} align="center" fill={template.accent} />
@@ -65,16 +65,10 @@ const Foreground = memo(function Foreground({ template, drink, drinkImage, logo,
     <Accent kind={template.pattern === "botanical" ? "leaf" : "heart"} x={33} y={713} scale={1} color={template.line} rotation={-15} />
     <Accent kind="leaf" x={979} y={1077} scale={0.9} color={template.ink} rotation={18} />
     <Rect x={96} y={406} width={888} height={1078} cornerRadius={30} stroke={template.line} strokeWidth={2} />
-    <Text x={116} y={1540} width={552} height={174} text={storyTitle} fontFamily={fontFamily} fontSize={fontSize} lineHeight={1.25} fill={template.ink} align="left" />
-    <Line points={[116, 1738, 646, 1738]} stroke={template.line} strokeWidth={1.5} />
-    <Text x={116} y={1758} width={560} text={copy.story.drinkTitles[drink.id]} fontFamily={fontFamily} fontStyle="bold" fontSize={drinkSize} fill={template.accent} />
-    <Group x={726} y={1520} rotation={6}>
-      <Rect x={-8} y={-8} width={254} height={324} fill={template.paper} cornerRadius={18} />
-      {drinkImage && <CanvasImage image={drinkImage} width={238} height={306} />}
-    </Group>
-    <Accent kind="heart" x={666} y={1610} scale={0.72} color={template.accent} rotation={-12} />
-    {logo && <CanvasImage image={logo} x={100} y={1802} width={54} height={54} />}
-    <Text x={169} y={1819} width={558} text={copy.story.footer} fontFamily={fontFamily} fontSize={19} fill={template.ink} />
+    <Text x={116} y={1540} width={848} height={174} text={storyTitle} fontFamily={fontFamily} fontSize={fontSize} lineHeight={1.25} fill={template.ink} align="left" />
+    <Line points={[116, 1738, 964, 1738]} stroke={template.line} strokeWidth={1.5} />
+    <Text x={116} y={1758} width={848} text={copy.story.drinkTitles[drink.id]} fontFamily={fontFamily} fontStyle="bold" fontSize={drinkSize} fill={template.accent} />
+    <Text x={116} y={1819} width={848} text={copy.story.footer} fontFamily={fontFamily} fontSize={19} fill={template.ink} />
     {foreground && <CanvasImage image={foreground} width={STORY.width} height={STORY.height} />}
   </Layer>;
 });
@@ -84,8 +78,6 @@ export default function StoryCanvas({ stageRef, photo, position, onPositionChang
   const [width, setWidth] = useState(270);
   const [fontReady, setFontReady] = useState(false);
   const [photoImage, photoStatus] = useImage(photo?.url || "");
-  const [drinkImage, drinkStatus] = useImage(drink.image, "anonymous");
-  const [logo, logoStatus] = useImage(GIRLS_DAY_LOGO, "anonymous");
   const [background, backgroundStatus] = useImage(template.backgroundImage || "", "anonymous");
   const [foreground, foregroundStatus] = useImage(template.foregroundImage || "", "anonymous");
   const gestures = usePinchZoom({ photo, frame: FRAME, position, onChange: onPositionChange });
@@ -103,13 +95,13 @@ export default function StoryCanvas({ stageRef, photo, position, onPositionChang
     return () => { active = false; };
   }, []);
   useEffect(() => {
-    const statuses = [drinkStatus, logoStatus];
+    const statuses = [];
     if (photo) statuses.push(photoStatus);
     if (template.backgroundImage) statuses.push(backgroundStatus);
     if (template.foregroundImage) statuses.push(foregroundStatus);
     onReady(!!photo && statuses.every((status) => status === "loaded"));
     onAssetError(statuses.includes("failed"));
-  }, [photo, photoStatus, drinkStatus, logoStatus, backgroundStatus, foregroundStatus, template, onReady, onAssetError]);
+  }, [photo, photoStatus, backgroundStatus, foregroundStatus, template, onReady, onAssetError]);
 
   return <div className="gdCanvasHolder" ref={holder}>
     <div className="gdCanvas" style={{ width, height: width * 16 / 9 }} role="group" aria-label={copy.preview}>
@@ -120,7 +112,7 @@ export default function StoryCanvas({ stageRef, photo, position, onPositionChang
             {photoImage && size && <CanvasImage image={photoImage} x={FRAME.x + (FRAME.width - size.width) / 2 + position.x} y={FRAME.y + (FRAME.height - size.height) / 2 + position.y} width={size.width} height={size.height} />}
           </Group>
         </Layer>
-        <Foreground template={template} drink={drink} drinkImage={drinkImage} logo={logo} foreground={foreground} name={name} copy={copy} fontReady={fontReady} />
+        <Foreground template={template} drink={drink} foreground={foreground} name={name} copy={copy} fontReady={fontReady} />
       </Stage>
       {photo ? <div className="gdPhotoGesture" key={photo.url} tabIndex={interactionDisabled ? -1 : 0} role="group" aria-label={copy.photoFrame} aria-disabled={interactionDisabled || undefined}
         style={{ pointerEvents: interactionDisabled ? "none" : undefined, left: `${FRAME.x / STORY.width * 100}%`, top: `${FRAME.y / STORY.height * 100}%`, width: `${FRAME.width / STORY.width * 100}%`, height: `${FRAME.height / STORY.height * 100}%` }} {...(interactionDisabled ? {} : gestures)} />

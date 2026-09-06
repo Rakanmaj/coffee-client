@@ -70,7 +70,7 @@ export default function GirlsDayStory() {
     if (await exporter.generate(name, drinkId)) setScreen("result");
   };
   const changeTemplate = useCallback((id) => { setReady(false); setTemplateId(id); }, []);
-  const changeDrink = useCallback((id) => { setReady(false); setDrinkId(id); }, []);
+  const changeDrink = useCallback((id) => { setDrinkId(id); }, []);
   const error = localPhoto.error || (screen === "editor" && exporter.error);
 
   return <MotionConfig reducedMotion="user"><div className="gdPage" dir={copy.direction}>

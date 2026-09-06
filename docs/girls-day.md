@@ -10,6 +10,8 @@ The browser applies EXIF orientation. Photos are resized locally to a maximum ed
 
 The preview is scaled for the screen. Export uses the Konva stage, never a screenshot, and produces an exact 1080 x 1920 PNG. Preview rounding is normalized at export. The downloaded file is named `MOM8NT-Girls-Day-[name].png`; unsafe filename characters are removed, and Arabic names are preserved.
 
+The story preview and PNG use a text-only footer, without the drink sticker or round logo. Drink selection still changes the story caption and result message. Illustrations remain on the campaign landing screen and drink selector; the round logo remains in the page header.
+
 ## Packages
 
 Added `react-konva`, `konva`, and `use-image` for the editor. Added `lucide-react` for accessible, consistent control icons. Reused the existing React, React Router, Framer Motion, Manrope and IBM Plex Sans Arabic setup. The editor is lazy loaded after photo selection.
