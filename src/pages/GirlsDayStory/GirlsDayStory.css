@@ -1,0 +1,253 @@
+.girlsDayBody { background: #fff9f2; }
+.gdPage {
+  --gd-ink: #28442f;
+  --gd-muted: #746c68;
+  --gd-pink: #a93a63;
+  --gd-line: #e7d9d0;
+  --gd-paper: #fff9f2;
+  color-scheme: light;
+  min-height: 100svh;
+  color: var(--gd-ink);
+  background: var(--gd-paper);
+  font-family: Manrope, "IBM Plex Sans Arabic", system-ui, sans-serif;
+  line-height: 1.5;
+  letter-spacing: 0;
+  overflow-x: clip;
+}
+.gdPage *, .gdPage *::before, .gdPage *::after { box-sizing: border-box; letter-spacing: 0; }
+.gdPage h1, .gdPage h2, .gdPage p { margin: 0; }
+.gdPage h1 { font-weight: 400; }
+.gdPage button, .gdPage input { font: inherit; }
+.gdPage button { cursor: pointer; touch-action: manipulation; }
+.gdPage button:disabled { cursor: default; opacity: 0.5; }
+.gdPage :focus-visible { outline: 3px solid var(--gd-pink); outline-offset: 4px; }
+.gdPage main:focus, .gdPage h1:focus { outline: none; }
+.gdPage button, .gdPage a, .gdPage label, .gdPage input { -webkit-tap-highlight-color: transparent; }
+.gdHeader {
+  min-height: 84px;
+  max-width: 1200px;
+  margin-inline: auto;
+  padding: 18px 36px;
+  display: flex;
+  align-items: center;
+  gap: 18px;
+  border-bottom: 1px solid var(--gd-line);
+}
+.gdBrand { display: inline-flex; gap: 12px; align-items: center; font-size: 17px; font-weight: 800; }
+.gdBrand img { border-radius: 50%; width: 42px; height: 42px; object-fit: cover; }
+.gdHeaderCampaign { margin-inline-start: auto; display: flex; gap: 9px; align-items: center; font-size: 11px; font-weight: 700; color: var(--gd-pink); }
+.gdButton {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+  min-height: 52px;
+  padding: 14px 24px;
+  border-radius: 8px;
+  border: 1px solid transparent;
+  font-weight: 700 !important;
+  font-size: 14px !important;
+  transition: background-color 160ms, transform 160ms, border-color 160ms;
+}
+.gdButton--primary { background: var(--gd-ink); color: #fff9f2; }
+.gdButton--primary:hover:not(:disabled) { background: #3b5b3c; }
+.gdButton:active:not(:disabled) { transform: translateY(1px); }
+.gdButton--outline { background: transparent; color: var(--gd-ink); border-color: #a6ae9d; }
+.gdButton--outline:hover:not(:disabled) { background: #edf0e4; }
+.gdTextButton { display: inline-flex; align-items: center; justify-content: center; gap: 8px; min-height: 44px; border: 0; padding: 6px 0; background: transparent; color: var(--gd-ink); font-size: 12px !important; font-weight: 600 !important; }
+.gdTextButton:hover:not(:disabled) { color: var(--gd-pink); }
+.gdIconButton { display: inline-flex; align-items: center; justify-content: center; flex: 0 0 44px; width: 44px; height: 44px; padding: 0; border: 0; background: transparent; color: var(--gd-ink); border-radius: 6px; }
+.gdIconButton:hover:not(:disabled) { background: #eedfd7; }
+.gdEyebrow { color: var(--gd-pink); font-size: 11px; font-weight: 700; text-transform: uppercase; }
+.gdPrivacy { display: flex; gap: 6px; align-items: center; justify-content: center; color: var(--gd-muted); font-size: 11px; }
+.gdPrivacy svg { color: var(--gd-pink); flex-shrink: 0; }
+.gdSrOnly { position: absolute; width: 1px; height: 1px; padding: 0; margin: -1px; overflow: hidden; clip: rect(0, 0, 0, 0); white-space: nowrap; border: 0; }
+
+/* The campaign opens as one unframed scene, with its two illustrated drinks. */
+.gdLanding { position: relative; padding: 24px 20px 0; text-align: center; }
+.gdLanding::before, .gdLanding::after { content: ""; position: absolute; pointer-events: none; top: 35px; bottom: 64px; width: 1px; background: #edd7df; }
+.gdLanding::before { left: 36px; }
+.gdLanding::after { right: 36px; }
+.gdLandingInner { position: relative; width: min(100%, 680px); margin: auto; }
+.gdEdition { display: flex; justify-content: center; align-items: center; gap: 14px; color: var(--gd-pink); height: 42px; margin-bottom: 7px; }
+.gdEdition svg { width: 51px; height: 51px; }
+.gdEdition span { width: 36px; height: 1px; background: #d1a7b1; }
+.gdLanding h1 { font-family: Georgia, "Times New Roman", serif; font-size: 76px; line-height: 0.97; margin-block: 14px 18px; }
+.gdLanding h1 em { color: var(--gd-pink); font-weight: 400; }
+.gdTagline { font-size: 14px; }
+.gdDrinkScene { position: relative; width: 500px; max-width: 100%; height: 263px; margin: 20px auto 0; }
+.gdHeroDrink { position: absolute; width: 197px; height: 255px; object-fit: contain; user-select: none; }
+.gdHeroDrink--latte { left: calc(50% - 188px); top: 0; transform: rotate(-10deg); }
+.gdHeroDrink--strawberry { left: calc(50% - 11px); top: 7px; transform: rotate(9deg); }
+.gdDecorations { position: absolute; inset: 0; pointer-events: none; }
+.gdFloat { position: absolute; color: var(--gd-pink); z-index: 2; }
+.gdFloat svg { width: 35px; height: 35px; }
+.gdFloat--heart { top: 45%; right: 1%; }
+.gdFloat--leaf { top: 16%; left: 1%; color: #637941; }
+.gdFloat--bow { bottom: 9%; left: 5%; }
+.gdLandingAction { position: relative; padding: 17px 0 24px; }
+.gdIntro { color: var(--gd-muted); font-size: 13px; max-width: 345px; margin: 0 auto 18px !important; line-height: 1.6; }
+.gdLandingAction .gdButton { min-width: 272px; }
+.gdLandingAction .gdPrivacy { margin-top: 12px; }
+.gdLandingFootnote { padding: 17px 12px 19px; border-top: 1px solid var(--gd-line); font-family: Georgia, serif; font-style: italic; color: var(--gd-pink); font-size: 13px; }
+
+.gdEditor { width: min(100%, 1080px); margin: auto; padding: 28px 36px 40px; }
+.gdEditorHeading { margin-bottom: 26px; }
+.gdEditorHeading h1 { margin-top: 4px; font-family: Georgia, serif; font-size: 38px; line-height: 1.2; }
+.gdEditorHeading > p:last-child { color: var(--gd-muted); margin-top: 6px; font-size: 13px; }
+.gdEditorLayout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(320px, 0.97fr); gap: 72px; align-items: start; }
+.gdPreviewColumn { position: sticky; top: 16px; display: flex; flex-direction: column; align-items: center; min-width: 0; }
+.gdCanvasHolder { width: min(100%, 333px, calc((100svh - 164px) * 0.5625)); min-width: 126px; }
+.gdCanvas { position: relative; margin-inline: auto; box-shadow: 0 14px 30px #3e3f2420; overflow: hidden; border-radius: 4px; }
+.gdCanvas canvas { display: block; }
+.gdPhotoGesture { position: absolute; touch-action: none; cursor: grab; overscroll-behavior: contain; -webkit-user-select: none; user-select: none; }
+.gdPhotoGesture:active { cursor: grabbing; }
+.gdPhotoGesture:focus-visible { outline-offset: -3px; }
+.gdPhotoPlaceholder { position: absolute; left: 9.26%; top: 21.35%; width: 81.48%; height: 55.73%; border: 0; background: transparent; color: #746c68; font-size: 11px !important; }
+.gdPhotoPlaceholder span { display: block; font-size: 25px; margin-top: 4px; }
+.gdGestureHint { color: var(--gd-muted); font-size: 10px; margin: 12px 0 4px !important; text-align: center; }
+.gdPhotoControls { width: min(100%, 345px); }
+.gdPhotoActions { display: flex; justify-content: space-between; align-items: center; gap: 12px; }
+.gdIconActions { display: flex; }
+.gdZoom { display: flex; align-items: center; gap: 2px; }
+.gdZoom input { flex: 1; min-width: 0; height: 36px; accent-color: var(--gd-ink); cursor: pointer; }
+.gdZoom output { font-size: 11px; font-variant-numeric: tabular-nums; text-align: end; min-width: 38px; }
+.gdOptionsColumn { min-width: 0; padding-top: 0; }
+.gdSteps { list-style: none; padding: 0 0 22px; margin: 0 0 26px; display: flex; justify-content: space-between; gap: 10px; border-bottom: 1px solid var(--gd-line); }
+.gdSteps li { display: flex; flex-direction: column; gap: 5px; color: var(--gd-muted); font-size: 10px; }
+.gdSteps span { font-size: 10px; color: var(--gd-pink); }
+.gdSteps .isActive { color: var(--gd-ink); font-weight: 700; }
+.gdEditorFields, .gdFieldset { padding: 0; margin: 0; border: 0; min-width: 0; }
+.gdEditorFields { display: flex; flex-direction: column; gap: 26px; }
+.gdFieldset legend, .gdLabelRow label { font-size: 13px; font-weight: 700; padding: 0; margin-bottom: 13px; }
+.gdTemplates { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 12px; }
+.gdTemplate { cursor: pointer; min-width: 0; }
+.gdTemplateArt { position: relative; height: 124px; display: flex; justify-content: center; padding: 8px; border-radius: 8px; border: 2px solid transparent; transition: border-color 150ms; }
+.gdTemplateArt img { height: 100%; width: auto; object-fit: contain; }
+.gdTemplate.isSelected .gdTemplateArt { border-color: var(--gd-ink); }
+.gdTemplate:has(input:focus-visible) .gdTemplateArt, .gdDrinkChoice:has(input:focus-visible) { outline: 3px solid var(--gd-pink); outline-offset: 3px; }
+.gdTemplate > span { display: block; font-size: 10px; line-height: 1.45; margin-top: 8px; color: var(--gd-muted); }
+.gdTemplate.isSelected > span { font-weight: 700; color: var(--gd-ink); }
+.gdSelectionCheck { position: absolute; display: flex; align-items: center; justify-content: center; width: 20px; height: 20px; background: var(--gd-ink); color: #fff; border-radius: 50%; bottom: 6px; inset-inline-end: 6px; }
+.gdLabelRow { display: flex; gap: 12px; justify-content: space-between; align-items: baseline; }
+.gdLabelRow > span { color: var(--gd-muted); font-size: 10px; }
+.gdNameField input { width: 100%; height: 48px; border: 1px solid #d8c9c1; border-radius: 6px; padding: 12px 14px; background: #fffdf8; color: var(--gd-ink); font-size: 16px; }
+.gdNameField input::placeholder { color: #87766d; }
+.gdDrinks { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); gap: 10px; }
+.gdDrinkChoice { position: relative; display: flex; align-items: center; gap: 6px; border: 1px solid #decec5; border-radius: 8px; padding: 12px 22px 12px 5px; min-height: 84px; cursor: pointer; }
+.gdDrinkChoice.isSelected { border: 1px solid var(--gd-ink); box-shadow: inset 0 0 0 1px var(--gd-ink); }
+.gdDrinkChoice img { width: 40px; height: 54px; object-fit: contain; }
+.gdDrinkChoice > span:not(.gdRadioMark) { font-size: 11px; line-height: 1.5; font-weight: 600; }
+.gdRadioMark { position: absolute; top: 6px; inset-inline-end: 6px; width: 15px; height: 15px; border: 1px solid #acae9a; border-radius: 50%; display: flex; align-items: center; justify-content: center; }
+.gdDrinkChoice.isSelected .gdRadioMark { background: var(--gd-ink); border-color: var(--gd-ink); color: #fff; }
+.gdCreateBar { margin-top: 28px; }
+.gdCreateBar .gdButton { width: 100%; }
+.gdCreateBar .gdPrivacy { margin-top: 12px; }
+.gdNotice { padding: 12px 16px; background: #f8e4e9; border: 1px solid #dcacbc; border-radius: 6px; color: #802d48; font-size: 12px; line-height: 1.6; }
+.gdNotice .gdTextButton { margin-inline-start: 12px; color: inherit; text-decoration: underline; }
+.gdPageNotice { width: min(680px, calc(100% - 32px)); margin: 16px auto 0; }
+.gdProcessing { padding: 12px 16px; text-align: center; color: var(--gd-pink); font-size: 13px; }
+
+.gdResult { width: min(100%, 940px); padding: 36px 36px 48px; margin: auto; }
+.gdResultCopy { text-align: center; margin-bottom: 30px; }
+.gdResultCopy h1 { font-family: Georgia, serif; font-size: 42px; line-height: 1.15; max-width: 570px; margin: 10px auto 14px; text-wrap: balance; }
+.gdResultIdentity { display: flex; align-items: center; justify-content: center; gap: 7px; font-size: 12px; color: var(--gd-pink); }
+.gdResultLayout { display: grid; grid-template-columns: minmax(0, 1fr) minmax(280px, 0.9fr); gap: 68px; align-items: center; }
+.gdResultVisual { position: relative; display: flex; justify-content: center; }
+.gdResultImage { width: auto; height: auto; max-width: 100%; max-height: min(64svh, 610px); aspect-ratio: 9 / 16; box-shadow: 0 18px 38px #544f2e21; border-radius: 4px; -webkit-touch-callout: default; }
+.gdResultActions { display: flex; flex-direction: column; gap: 12px; min-width: 0; }
+.gdResultMessage { color: var(--gd-muted); font-size: 12px; line-height: 1.6; }
+.gdResultMessage:empty { display: none; }
+.gdReward { border: 1px solid #e4c5ce; background: #f8e8ea; border-radius: 8px; padding: 20px; display: flex; align-items: flex-start; gap: 13px; margin-top: 12px; }
+.gdReward > svg { color: var(--gd-pink); flex-shrink: 0; }
+.gdReward h2 { font-size: 13px; font-weight: 700; }
+.gdReward p { color: #746161; font-size: 12px; margin-top: 6px; line-height: 1.65; }
+.gdAgain { align-self: center; margin-top: 10px; }
+.gdCelebration { position: absolute; left: 50%; top: 20%; pointer-events: none; }
+.gdCelebration > span { position: absolute; display: block; color: var(--gd-pink); }
+.gdCelebration svg { width: 36px; height: 36px; }
+
+@media (min-width: 1400px) and (min-height: 900px) {
+  .gdLanding { padding-top: 36px; }
+  .gdLanding h1 { font-size: 88px; }
+  .gdDrinkScene { height: 307px; }
+  .gdHeroDrink { height: 297px; width: 224px; }
+  .gdHeroDrink--latte { left: calc(50% - 210px); }
+}
+@media (max-width: 760px) {
+  .gdHeader { min-height: 66px; padding: 12px 20px; gap: 10px; }
+  .gdBrand { font-size: 14px; gap: 8px; }
+  .gdBrand img { width: 34px; height: 34px; }
+  .gdHeaderCampaign { font-size: 9px; gap: 5px; }
+  .gdHeader > .gdIconButton { width: 34px; flex-basis: 34px; height: 36px; }
+  .gdLanding { padding: 22px 24px 0; }
+  .gdLanding::before { left: 12px; }
+  .gdLanding::after { right: 12px; }
+  .gdLanding::before, .gdLanding::after { top: 24px; bottom: 59px; }
+  .gdEdition { height: 31px; margin-bottom: 12px; }
+  .gdEdition svg { width: 42px; height: 42px; }
+  .gdLanding .gdEyebrow { font-size: 10px; }
+  .gdLanding h1 { font-size: 62px; margin-block: 13px 15px; }
+  .gdTagline { font-size: 12px; }
+  .gdDrinkScene { height: 220px; margin-top: 20px; max-width: 340px; }
+  .gdHeroDrink { width: 163px; height: 211px; }
+  .gdHeroDrink--latte { left: calc(50% - 151px); }
+  .gdHeroDrink--strawberry { left: calc(50% - 14px); }
+  .gdFloat--leaf { left: -8px; top: 7px; }
+  .gdFloat--heart { right: -7px; top: 55%; }
+  .gdFloat--bow { left: -2px; bottom: 15px; }
+  .gdFloat svg { width: 25px; height: 25px; }
+  .gdIntro { font-size: 12px; max-width: 282px; margin-bottom: 16px !important; }
+  .gdLandingAction { padding-top: 16px; padding-bottom: 24px; }
+  .gdLandingAction .gdButton { min-width: 0; width: min(100%, 318px); }
+  .gdLandingFootnote { font-size: 11px; padding: 17px 0 20px; }
+  .gdEditor { padding: 20px 20px 0; }
+  .gdEditorHeading { text-align: center; margin-bottom: 20px; }
+  .gdEditorHeading h1 { font-size: 30px; }
+  .gdEditorHeading .gdEyebrow { display: none; }
+  .gdEditorHeading > p:last-child { font-size: 12px; margin-top: 4px; }
+  .gdEditorLayout { grid-template-columns: minmax(0, 1fr); gap: 24px; }
+  .gdPreviewColumn { position: relative; top: 0; }
+  .gdCanvasHolder { width: min(100%, 270px, calc(50svh * 0.5625)); }
+  .gdPhotoControls { max-width: 360px; }
+  .gdGestureHint { margin-top: 11px !important; }
+  .gdOptionsColumn { max-width: 420px; width: 100%; margin: auto; }
+  .gdSteps { margin-bottom: 22px; padding-bottom: 16px; }
+  .gdSteps li { flex-direction: row; align-items: baseline; font-size: 10px; gap: 4px; }
+  .gdEditorFields { gap: 24px; }
+  .gdTemplates { gap: 10px; }
+  .gdTemplateArt { height: 112px; }
+  .gdFieldset legend, .gdLabelRow label { font-size: 13px; }
+  .gdNameField input { height: 48px; }
+  .gdCreateBar { position: sticky; bottom: 0; z-index: 5; margin: 24px -20px 0; padding: 14px 20px max(12px, env(safe-area-inset-bottom)); background: #fff9f2f5; border-top: 1px solid var(--gd-line); }
+  .gdCreateBar .gdPrivacy { margin-top: 8px; font-size: 10px; }
+  .gdCreateBar .gdButton { min-height: 50px; }
+  .gdResult { padding: 26px 22px 30px; }
+  .gdResultCopy { margin-bottom: 22px; }
+  .gdResultCopy h1 { font-size: 34px; max-width: 340px; }
+  .gdResultIdentity { font-size: 11px; gap: 5px; }
+  .gdResultLayout { grid-template-columns: minmax(0, 1fr); gap: 26px; }
+  .gdResultImage { max-height: 52svh; }
+  .gdResultActions { max-width: 370px; width: 100%; margin-inline: auto; }
+  .gdReward { margin-top: 6px; }
+}
+@media (max-width: 380px), (max-height: 720px) and (max-width: 760px) {
+  .gdLanding { padding-top: 14px; }
+  .gdLanding h1 { font-size: 52px; }
+  .gdDrinkScene { height: 170px; margin-top: 14px; max-width: 275px; }
+  .gdHeroDrink { width: 127px; height: 166px; }
+  .gdHeroDrink--latte { left: calc(50% - 120px); }
+  .gdHeroDrink--strawberry { left: calc(50% - 7px); }
+  .gdLandingAction { padding-top: 12px; }
+  .gdEdition { margin-bottom: 8px; height: 27px; }
+  .gdTemplateArt { height: 96px; }
+  .gdEditorHeading h1 { font-size: 26px; }
+  .gdEditor { padding-inline: 16px; }
+  .gdDrinkChoice { gap: 2px; padding-inline-start: 3px; }
+  .gdDrinkChoice > span:not(.gdRadioMark) { font-size: 10px; }
+  .gdDrinkChoice img { width: 34px; }
+  .gdResultCopy h1 { font-size: 30px; }
+}
+@media (prefers-reduced-motion: reduce) {
+  .gdPage *, .gdPage *::before, .gdPage *::after { animation: none !important; transition: none !important; scroll-behavior: auto !important; }
+}

@@ -16,6 +16,7 @@ const Storage = lazy(() => import("./pages/Storage/Storage"));
 const DriveThru = lazy(() => import("./pages/DriveThru/DriveThru"));
 const DriveThroughOrders = lazy(() => import("./pages/DriveThroughOrders/DriveThroughOrders"));
 const MomentLanding = lazy(() => import("./pages/MomentLanding/MomentLanding"));
+const GirlsDayStory = lazy(() => import("./pages/GirlsDayStory/GirlsDayStory"));
 
 export default function App() {
   const location = useLocation();
@@ -28,6 +29,12 @@ export default function App() {
       normalized_path === "/drive-through" ||
       normalized_path.startsWith("/drive-through/"));
   const is_moment_landing = normalized_path === "/moment";
+  const is_girls_day = normalized_path === "/matcha-day" || normalized_path === "/girls-day";
+
+  // The campaign is entirely local and does not need staff sessions or live orders.
+  if (is_girls_day) {
+    return <Suspense fallback={null}><GirlsDayStory /></Suspense>;
+  }
 
   return (
     <AppProvider>
